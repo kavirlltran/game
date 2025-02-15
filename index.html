@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trò Chơi Flashcard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .game-container {
+            margin-top: 20px;
+        }
+        .door-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .door {
+            width: 150px;
+            height: 100px;
+            background-color: gray;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Trò Chơi Flashcard</h1>
+    <button id="startGame">START</button>
+    <div class="game-container hidden" id="gameContainer">
+        <button id="revealImage">Bắt đầu</button>
+        <div id="imageContainer" class="hidden">
+            <img id="randomImage" src="" alt="Hình ảnh" width="200">
+        </div>
+        <div class="door-container">
+            <div class="door" data-word="Online Learning">Online Learning</div>
+            <div class="door" data-word="Blended Learning">Blended Learning</div>
+            <div class="door" data-word="Strategy">Strategy</div>
+            <div class="door" data-word="Prepare for">Prepare for</div>
+            <div class="door" data-word="Face to Face Learning">Face to Face Learning</div>
+            <div class="door" data-word="Email">Email</div>
+        </div>
+        <p id="flashcard" class="hidden"></p>
+        <button id="showAnswer" class="hidden">Xem đáp án</button>
+    </div>
+    <script>
+        const images = [
+            { src: "online_learning.jpg", word: "Online Learning" },
+            { src: "blended_learning.jpg", word: "Blended Learning" },
+            { src: "strategy.jpg", word: "Strategy" },
+            { src: "prepare_for.jpg", word: "Prepare for" },
+            { src: "face_to_face_learning.jpg", word: "Face to Face Learning" },
+            { src: "email.jpg", word: "Email" }
+        ];
+        let currentImage = null;
+
+        document.getElementById("startGame").addEventListener("click", () => {
+            document.getElementById("gameContainer").classList.remove("hidden");
+        });
+
+        document.getElementById("revealImage").addEventListener("click", () => {
+            currentImage = images[Math.floor(Math.random() * images.length)];
+            document.getElementById("randomImage").src = currentImage.src;
+            document.getElementById("imageContainer").classList.remove("hidden");
+            setTimeout(() => {
+                document.getElementById("imageContainer").classList.add("hidden");
+                document.getElementById("flashcard").innerText = "Từ cần tìm: " + currentImage.word;
+                document.getElementById("flashcard").classList.remove("hidden");
+                document.getElementById("showAnswer").classList.remove("hidden");
+            }, 3000);
+        });
+
+        document.getElementById("showAnswer").addEventListener("click", () => {
+            alert("Đáp án đúng: " + currentImage.word);
+        });
+    </script>
+</body>
+</html>
