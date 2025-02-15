@@ -3,30 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trò Chơi Flashcard</title>
+    <title>Trò Chơi Học Từ Vựng</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
+            margin: 20px;
         }
-        .game-container {
-            margin-top: 20px;
+        .question-container {
+            margin-bottom: 20px;
         }
-        .door-container {
+        .choices-container {
             display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .door {
-            width: 150px;
-            height: 100px;
-            background-color: gray;
-            display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            font-size: 16px;
+        }
+        .choice {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 5px;
+            width: 200px;
             cursor: pointer;
+        }
+        .choice:hover {
+            background-color: #e0e0e0;
         }
         .hidden {
             display: none;
@@ -34,54 +35,100 @@
     </style>
 </head>
 <body>
-    <h1>Trò Chơi Flashcard</h1>
-    <button id="startGame">START</button>
-    <div class="game-container hidden" id="gameContainer">
-        <button id="revealImage">Bắt đầu</button>
-        <div id="imageContainer" class="hidden">
-            <img id="randomImage" src="" alt="Hình ảnh" width="200">
-        </div>
-        <div class="door-container">
-            <div class="door" data-word="Online Learning">Online Learning</div>
-            <div class="door" data-word="Blended Learning">Blended Learning</div>
-            <div class="door" data-word="Strategy">Strategy</div>
-            <div class="door" data-word="Prepare for">Prepare for</div>
-            <div class="door" data-word="Face to Face Learning">Face to Face Learning</div>
-            <div class="door" data-word="Email">Email</div>
-        </div>
-        <p id="flashcard" class="hidden"></p>
-        <button id="showAnswer" class="hidden">Xem đáp án</button>
+    <h1>Trò Chơi Học Từ Vựng</h1>
+    <div id="gameContainer">
+        <div id="questionContainer" class="question-container"></div>
+        <div id="choicesContainer" class="choices-container"></div>
+        <button id="nextButton" class="hidden">Câu tiếp theo</button>
+    </div>
+    <div id="resultContainer" class="hidden">
+        <h2>Kết quả</h2>
+        <p id="score"></p>
+        <button id="restartButton">Chơi lại</button>
     </div>
     <script>
-        const images = [
-            { src: "online_learning.jpg", word: "Online Learning" },
-            { src: "blended_learning.jpg", word: "Blended Learning" },
-            { src: "strategy.jpg", word: "Strategy" },
-            { src: "prepare_for.jpg", word: "Prepare for" },
-            { src: "face_to_face_learning.jpg", word: "Face to Face Learning" },
-            { src: "email.jpg", word: "Email" }
+        const questions = [
+            {
+                question: "Học trực tuyến là gì?",
+                choices: ["Online Learning", "Blended Learning", "Face to Face Learning", "Email"],
+                correctAnswer: "Online Learning"
+            },
+            {
+                question: "Học kết hợp là gì?",
+                choices: ["Online Learning", "Blended Learning", "Strategy", "Prepare for"],
+                correctAnswer: "Blended Learning"
+            },
+            // Thêm các câu hỏi khác tương tự
         ];
-        let currentImage = null;
 
-        document.getElementById("startGame").addEventListener("click", () => {
-            document.getElementById("gameContainer").classList.remove("hidden");
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        const questionContainer = document.getElementById('questionContainer');
+        const choicesContainer = document.getElementById('choicesContainer');
+        const nextButton = document.getElementById('nextButton');
+        const resultContainer = document.getElementById('resultContainer');
+        const scoreDisplay = document.getElementById('score');
+        const restartButton = document.getElementById('restartButton');
+
+        function startGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            resultContainer.classList.add('hidden');
+            gameContainer.classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            resetState();
+            const currentQuestion = questions[currentQuestionIndex];
+            questionContainer.innerText = currentQuestion.question;
+
+            currentQuestion.choices.forEach(choice => {
+                const button = document.createElement('button');
+                button.innerText = choice;
+                button.classList.add('choice');
+                button.addEventListener('click', () => selectAnswer(choice));
+                choicesContainer.appendChild(button);
+            });
+        }
+
+        function resetState() {
+            nextButton.classList.add('hidden');
+            while (choicesContainer.firstChild) {
+                choicesContainer.removeChild(choicesContainer.firstChild);
+            }
+        }
+
+        function selectAnswer(choice) {
+            const correct = choice === questions[currentQuestionIndex].correctAnswer;
+            if (correct) {
+                score++;
+                alert('Đúng rồi!');
+            } else {
+                alert('Sai rồi!');
+            }
+            nextButton.classList.remove('hidden');
+        }
+
+        function showResult() {
+            gameContainer.classList.add('hidden');
+            resultContainer.classList.remove('hidden');
+            scoreDisplay.innerText = `Bạn trả lời đúng ${score} trên ${questions.length} câu.`;
+        }
+
+        nextButton.addEventListener('click', () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
         });
 
-        document.getElementById("revealImage").addEventListener("click", () => {
-            currentImage = images[Math.floor(Math.random() * images.length)];
-            document.getElementById("randomImage").src = currentImage.src;
-            document.getElementById("imageContainer").classList.remove("hidden");
-            setTimeout(() => {
-                document.getElementById("imageContainer").classList.add("hidden");
-                document.getElementById("flashcard").innerText = "Từ cần tìm: " + currentImage.word;
-                document.getElementById("flashcard").classList.remove("hidden");
-                document.getElementById("showAnswer").classList.remove("hidden");
-            }, 3000);
-        });
+        restartButton.addEventListener('click', startGame);
 
-        document.getElementById("showAnswer").addEventListener("click", () => {
-            alert("Đáp án đúng: " + currentImage.word);
-        });
+        startGame();
     </script>
 </body>
 </html>
