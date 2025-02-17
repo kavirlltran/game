@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Trò chơi Chọn Ảnh – Cập nhật</title>
+  <title>Trò chơi Chọn Ảnh – Updated</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     /* BASE RESET & NỀN */
@@ -122,7 +122,7 @@
       border-radius: 10px;
     }
     
-    /* Số thứ tự */
+    /* Số thứ tự (tách riêng) */
     .number-label {
       background: #ff9800;
       color: #fff;
@@ -134,7 +134,7 @@
       animation: bounce 1s;
     }
     
-    /* Container ảnh: tăng 50% so với gốc 700×440px → 1050×660px, sau đó tăng thêm 30%: tổng khoảng 1365×858px */
+    /* Container ảnh: tăng 50% so với gốc (700×440px → 1050×660px), sau đó tăng thêm 30% → khoảng 1365×858px */
     .image-container {
       position: relative;
       width: 100%;
@@ -193,7 +193,7 @@
     .checkmark { color: green; }
     .wrongmark { color: red; }
     
-    /* Nút "Câu tiếp theo" */
+    /* Nút "Next" */
     #nextBtn {
       margin-top: 20px;
       animation: fadeIn 1s ease-out;
@@ -232,32 +232,30 @@
   <!-- Nhạc nền tự động chạy -->
   <audio id="bgMusic" src="nhac nen.mp3" loop autoplay></audio>
   
-  <!-- Màn hình Bắt đầu -->
+  <!-- Màn hình Start -->
   <div id="startScreen" class="screen active">
     <div class="text-container">
       <h1>Trò chơi: Chọn Ảnh Đúng</h1>
       <p>
-        Mỗi câu có 3 ảnh (1 đúng, 2 nhiễu).<br>
-        Bạn sẽ được xem ảnh trong 6 giây (trong thời gian này, bạn không thể chọn đáp án),<br>
-        sau đó ảnh sẽ bị che bằng <em>che.png</em> với hiệu ứng trượt mượt.<br>
-        Hãy nhớ vị trí ảnh đúng, rồi click để mở lớp che và chọn đáp án!
+        B1: Nhấn <span style="font-weight: bold; border: 2px solid #0077cc; padding: 5px 10px;">Start</span> để vào game;<br>
+        B2: Học sinh sẽ quan sát hình ảnh được mở ra từ ô cửa trong khoảng thời gian đã chọn, hết thời gian ô cửa đóng lại và hiện lên một flashcard từ vựng/âm thanh của từ vựng. Nhiệm vụ của học sinh là ghi nhớ đúng từ đó nằm trong ô cửa nào và đập tay vào đúng ô cửa đó.
       </p>
     </div>
-    <button class="btn" id="startBtn">Bắt đầu</button>
+    <button class="btn" id="startBtn">Start</button>
   </div>
   
   <!-- Màn hình Game -->
   <div id="gameScreen" class="screen">
     <div class="text-container">
-      <!-- Ban đầu chỉ hiển thị "Câu 1" -->
-      <h2 id="questionTitle">Câu 1</h2>
+      <!-- Ban đầu chỉ hiển thị "Question 1" -->
+      <h2 id="questionTitle">Question 1</h2>
     </div>
     <div id="timerDisplay"></div>
     <div id="imageWrapper"></div>
-    <button class="btn" id="nextBtn" disabled>Câu tiếp theo</button>
+    <button class="btn" id="nextBtn" disabled>Next</button>
   </div>
   
-  <!-- Màn hình Kết thúc -->
+  <!-- Màn hình End -->
   <div id="endScreen" class="screen">
     <div class="text-container">
       <h1>Kết thúc trò chơi</h1>
@@ -271,7 +269,7 @@
     const audioCorrect = new Audio('true.mp3');
     const audioWrong = new Audio('failed.mp3');
     
-    // Các câu hỏi (không có phần gợi ý)
+    // Các câu hỏi (không có gợi ý)
     const questions = [
       {
         word: "face-to-face",
@@ -347,8 +345,8 @@
       nextBtn.disabled = true;
       updateTimerDisplay();
       
-      // Ban đầu chỉ hiển thị "Câu X"
-      questionTitle.textContent = `Câu ${currentQuestionIndex + 1}`;
+      // Ban đầu chỉ hiển thị "Question X"
+      questionTitle.textContent = `Question ${currentQuestionIndex + 1}`;
       
       const q = questions[currentQuestionIndex];
       const allImages = [q.correct, ...q.distractors];
@@ -416,9 +414,9 @@
           clearInterval(timerInterval);
           showAllCovers();
           canSelect = true;
-          // Sau 6s, cập nhật tiêu đề câu hỏi thành "Câu X: [word]"
+          // Sau 6s, cập nhật tiêu đề câu hỏi thành "Question X: [word]"
           const q = questions[currentQuestionIndex];
-          questionTitle.textContent = `Câu ${currentQuestionIndex + 1}: ${q.word}`;
+          questionTitle.textContent = `Question ${currentQuestionIndex + 1}: ${q.word}`;
         }
       }, 1000);
     }
