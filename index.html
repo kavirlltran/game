@@ -2,10 +2,10 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Trò chơi Chọn Ảnh – 5s Xem Ảnh</title>
+  <title>Trò chơi Chọn Ảnh – natra.jpg Overlay</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* RESET CƠ BẢN */
+    /* RESET & FONT */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -19,7 +19,7 @@
       padding: 10px;
     }
 
-    /* CÁC MÀN HÌNH CHÍNH */
+    /* MÀN HÌNH CHÍNH */
     .screen {
       display: none;
       min-height: 100vh;
@@ -29,7 +29,7 @@
       display: block;
     }
 
-    /* KHUNG CHUNG CHỨA NỘI DUNG GAME */
+    /* KHUNG CHUNG */
     .game-container {
       background: #fff;
       border: 4px solid #ccc;
@@ -39,7 +39,7 @@
       padding: 20px;
     }
 
-    h1, h2, h3, p {
+    h1, h2, p {
       margin: 10px 0;
     }
 
@@ -59,39 +59,32 @@
       background: #005fa3;
     }
 
-    /* TIÊU ĐỀ CÂU HỎI, TỪ KHÓA */
+    /* TIÊU ĐỀ CÂU HỎI */
     #questionTitle {
       font-size: 1.8rem;
       margin-bottom: 20px;
     }
-    #keyword {
-      display: block;
-      font-size: 2rem;        /* lớn hơn */
-      font-weight: bold;      /* in đậm */
-      color: #ffc107;         /* vàng */
-      margin: 10px 0 20px 0;
-    }
 
-    /* HIỂN THỊ THỜI GIAN XEM ẢNH 5S */
+    /* HIỂN THỊ THỜI GIAN 5 GIÂY */
     #timerDisplay {
       font-size: 1.2rem;
       font-weight: bold;
-      margin-bottom: 15px;
       color: red;
+      margin-bottom: 15px;
     }
 
-    /* KHU VỰC CHỨA 3 ẢNH */
+    /* VÙNG CHỨA 3 ẢNH */
     #imageWrapper {
       display: flex;
       justify-content: center;
-      gap: 30px; /* khoảng cách giữa 3 ảnh */
-      flex-wrap: wrap; /* xuống hàng trên mobile */
+      gap: 30px;
+      flex-wrap: wrap; /* Cho mobile */
       margin-top: 20px;
     }
     .image-container {
       position: relative;
-      width: 250px;  /* cố định chiều rộng để giữ tỉ lệ */
-      height: 180px; /* chiều cao tương đối */
+      width: 280px;
+      height: 180px;
       border: 3px solid #ddd;
       border-radius: 10px;
       overflow: hidden;
@@ -105,11 +98,12 @@
       object-fit: cover;
       display: block;
     }
-    /* NHÃN SỐ THỨ TỰ 1,2,3 */
+    /* NHÃN SỐ THỨ TỰ 1,2,3 - đặt phía trên ảnh */
     .number-label {
       position: absolute;
-      top: 5px;
-      left: 5px;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
       background: #ff9800;
       color: #fff;
       padding: 4px 8px;
@@ -117,18 +111,19 @@
       font-weight: bold;
     }
 
-    /* CHE ẢNH HOÀN TOÀN (KHÔNG TRONG SUỐT) */
+    /* COVER = ẢNH NATRA.JPG */
     .cover {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: #000; /* đen hoàn toàn */
-      display: none;    /* ẩn ban đầu */
+      background: url('natra.jpg') no-repeat center center;
+      background-size: cover;
+      display: none; /* ẩn ban đầu */
       justify-content: center;
       align-items: center;
     }
 
-    /* DẤU ✓ / ✗ */
+    /* DẤU TÍCH (✓) / DẤU X (✗) */
     .checkmark, .wrongmark {
       position: absolute;
       top: 50%;
@@ -146,9 +141,51 @@
       color: red;
     }
 
-    /* NÚT NEXT Ở DƯỚI */
+    /* NÚT NEXT LUÔN HIỂN THỊ */
     #nextBtn {
       margin-top: 20px;
+    }
+
+    /* MODAL HIỂN THỊ ẢNH CHỌN */
+    #modalOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    #modalContent {
+      position: relative;
+      max-width: 90%;
+      max-height: 90%;
+    }
+    #modalImage {
+      width: 100%;
+      height: auto;
+      display: block;
+      border: 4px solid #fff;
+      border-radius: 10px;
+    }
+    /* Dấu ✓/✗ trong modal */
+    #modalMark {
+      position: absolute;
+      top: 10px; 
+      right: 10px;
+      font-size: 3rem;
+      font-weight: bold;
+      color: green; /* mặc định xanh, sẽ đổi sang đỏ nếu sai */
+    }
+    /* Close modal */
+    #modalClose {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 2rem;
+      color: #fff;
+      cursor: pointer;
     }
 
     /* MÀN HÌNH KẾT THÚC */
@@ -157,7 +194,7 @@
       font-size: 1.5rem;
     }
 
-    /* RESPONSIVE CHO MÀN HÌNH NHỎ */
+    /* RESPONSIVE */
     @media (max-width: 768px) {
       .image-container {
         width: 80%;
@@ -176,7 +213,7 @@
 <div id="startScreen" class="screen active">
   <div class="game-container">
     <h1>Trò chơi: Chọn Ảnh Đúng</h1>
-    <p>Mỗi câu có 3 ảnh (1 đúng, 2 sai). Bạn có 5 giây để xem ảnh, sau đó ảnh sẽ bị che hoàn toàn, từ khóa hiện ra. Hãy nhớ vị trí ảnh đúng và chọn!</p>
+    <p>Bạn có 5 giây để xem 3 ảnh (1 đúng, 2 nhiễu). Hết 5 giây, ảnh bị che bằng <em>natra.jpg</em>. Hãy nhớ vị trí ảnh đúng!</p>
     <button class="btn" id="startBtn">Bắt đầu</button>
   </div>
 </div>
@@ -186,14 +223,10 @@
   <div class="game-container">
     <h2 id="questionTitle">Câu 1</h2>
     <div id="timerDisplay"></div>
-    <!-- TỪ KHÓA (sau 5s mới hiển thị) -->
-    <span id="keyword"></span>
-
-    <!-- KHỐI 3 ẢNH -->
     <div id="imageWrapper"></div>
 
-    <!-- NÚT NEXT -->
-    <button class="btn" id="nextBtn" style="display: none;">Câu tiếp theo</button>
+    <!-- NÚT NEXT LUÔN HIỂN THỊ -->
+    <button class="btn" id="nextBtn">Câu tiếp theo</button>
   </div>
 </div>
 
@@ -206,11 +239,19 @@
   </div>
 </div>
 
+<!-- MODAL HIỂN THỊ ẢNH CHỌN -->
+<div id="modalOverlay">
+  <div id="modalContent">
+    <span id="modalClose">✕</span>
+    <img id="modalImage" src="" alt="Selected" />
+    <div id="modalMark">✓</div>
+  </div>
+</div>
+
 <script>
   /************************************************************
    * 1. DỮ LIỆU CÂU HỎI
    ************************************************************/
-  // Mỗi câu: từ khóa (word), ảnh đúng (correct), 2 ảnh nhiễu (distractors)
   const questions = [
     {
       word: "face-to-face",
@@ -252,13 +293,18 @@
 
   const questionTitle = document.getElementById("questionTitle");
   const timerDisplay = document.getElementById("timerDisplay");
-  const keywordEl = document.getElementById("keyword");
   const imageWrapper = document.getElementById("imageWrapper");
   const nextBtn = document.getElementById("nextBtn");
   const resultText = document.getElementById("resultText");
 
   const startBtn = document.getElementById("startBtn");
   const replayBtn = document.getElementById("replayBtn");
+
+  // Modal
+  const modalOverlay = document.getElementById("modalOverlay");
+  const modalImage = document.getElementById("modalImage");
+  const modalMark = document.getElementById("modalMark");
+  const modalClose = document.getElementById("modalClose");
 
   /************************************************************
    * 2. CHUYỂN MÀN HÌNH
@@ -292,17 +338,16 @@
    ************************************************************/
   function loadQuestion() {
     // Reset
-    keywordEl.textContent = "";
-    nextBtn.style.display = "none";
-    imageWrapper.innerHTML = "";
     clearInterval(timerInterval);
+    imageWrapper.innerHTML = "";
+    remainingTime = viewTime;
+    updateTimerDisplay();
 
-    // Lấy câu hỏi
-    const question = questions[currentQuestionIndex];
-    questionTitle.textContent = `Câu ${currentQuestionIndex + 1}`;
+    const q = questions[currentQuestionIndex];
+    questionTitle.textContent = `Câu ${currentQuestionIndex + 1}: ${q.word}`;
 
     // Tạo mảng 3 ảnh
-    const allImages = [question.correct, ...question.distractors];
+    const allImages = [q.correct, ...q.distractors];
     shuffleArray(allImages);
 
     // Tạo DOM 3 ảnh
@@ -320,7 +365,7 @@
       label.className = "number-label";
       label.textContent = (index + 1).toString();
 
-      // Overlay che hoàn toàn
+      // Cover = natra.jpg
       const cover = document.createElement("div");
       cover.className = "cover";
 
@@ -328,33 +373,35 @@
       const checkmark = document.createElement("div");
       checkmark.className = "checkmark";
       checkmark.textContent = "✓";
+
       const wrongmark = document.createElement("div");
       wrongmark.className = "wrongmark";
       wrongmark.textContent = "✗";
 
-      // Xử lý khi click ảnh
+      // Click ảnh
       container.addEventListener("click", () => {
-        // Chỉ cho phép click khi ảnh đã bị che (tức sau 5s)
+        // Chỉ cho phép click khi cover đã hiển thị
         if (cover.style.display !== "flex") return;
 
-        // Nếu đã chọn 1 ảnh rồi, không cho chọn lại
+        // Nếu đã chọn 1 ảnh trước đó, bỏ qua
         if (document.querySelector(".image-container.selected")) return;
 
-        // Đánh dấu ảnh được chọn
         container.classList.add("selected");
 
         // Kiểm tra đúng/sai
-        if (imgSrc === question.correct) {
+        let isCorrect = (imgSrc === q.correct);
+        if (isCorrect) {
           checkmark.style.display = "block";
           score++;
         } else {
           wrongmark.style.display = "block";
         }
 
-        // Vô hiệu hóa click tiếp
+        // Hiển thị modal phóng to ảnh
+        showModal(imgSrc, isCorrect);
+
+        // Vô hiệu hóa click khác
         disableAllClicks();
-        // Hiện nút "Câu tiếp theo"
-        nextBtn.style.display = "inline-block";
       });
 
       container.appendChild(img);
@@ -365,25 +412,22 @@
       imageWrapper.appendChild(container);
     });
 
-    // Bắt đầu đếm 5s cho giai đoạn xem ảnh
-    remainingTime = viewTime;
-    updateTimer();
+    // Đếm 5s cho giai đoạn xem ảnh
     timerInterval = setInterval(() => {
       remainingTime--;
-      updateTimer();
+      updateTimerDisplay();
       if (remainingTime <= 0) {
         clearInterval(timerInterval);
-        // Hết 5s -> che ảnh, hiển thị keyword
-        hideAllImages();
-        keywordEl.textContent = question.word;
+        // Hết 5s -> hiển thị cover natra.jpg
+        showCovers();
       }
     }, 1000);
   }
 
   /************************************************************
-   * 5. CHE ẢNH HOÀN TOÀN SAU 5S
+   * 5. HIỂN THỊ COVER NATRA.JPG
    ************************************************************/
-  function hideAllImages() {
+  function showCovers() {
     const covers = document.querySelectorAll(".cover");
     covers.forEach((cover) => {
       cover.style.display = "flex";
@@ -393,7 +437,7 @@
   /************************************************************
    * 6. CẬP NHẬT HIỂN THỊ TIMER
    ************************************************************/
-  function updateTimer() {
+  function updateTimerDisplay() {
     timerDisplay.textContent = `Thời gian xem ảnh: ${remainingTime}s`;
   }
 
@@ -408,7 +452,29 @@
   }
 
   /************************************************************
-   * 8. NÚT NEXT
+   * 8. SHOW MODAL PHÓNG TO ẢNH
+   ************************************************************/
+  function showModal(imgSrc, isCorrect) {
+    modalImage.src = imgSrc;
+    modalMark.textContent = isCorrect ? "✓" : "✗";
+    modalMark.style.color = isCorrect ? "green" : "red";
+    modalOverlay.style.display = "flex";
+  }
+
+  // Đóng modal
+  function closeModal() {
+    modalOverlay.style.display = "none";
+  }
+  modalClose.addEventListener("click", closeModal);
+  // Click ngoài modal cũng đóng
+  modalOverlay.addEventListener("click", (e) => {
+    if (e.target === modalOverlay) {
+      closeModal();
+    }
+  });
+
+  /************************************************************
+   * 9. NÚT NEXT
    ************************************************************/
   nextBtn.addEventListener("click", () => {
     currentQuestionIndex++;
@@ -420,7 +486,7 @@
   });
 
   /************************************************************
-   * 9. KẾT THÚC
+   * 10. KẾT THÚC
    ************************************************************/
   function endGame() {
     showScreen("end");
@@ -428,7 +494,7 @@
   }
 
   /************************************************************
-   * 10. XÁO TRỘN MẢNG
+   * 11. XÁO TRỘN MẢNG
    ************************************************************/
   function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -438,7 +504,7 @@
   }
 
   /************************************************************
-   * 11. NÚT SỰ KIỆN
+   * 12. SỰ KIỆN NÚT
    ************************************************************/
   startBtn.addEventListener("click", startGame);
   replayBtn.addEventListener("click", () => {
