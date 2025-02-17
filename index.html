@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Trò chơi Chọn Ảnh – Nhạc Nền & Chọn Lại Đáp Án</title>
+  <title>Trò chơi Chọn Ảnh – Mở ảnh & Chọn lại khi sai</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     /* BASE RESET & NỀN */
@@ -12,7 +12,7 @@
       padding: 0;
     }
     body {
-      font-family: 'Arial', sans-serif;
+      font-family: Arial, sans-serif;
       background: url('hinh-nen-ai-64.jpg') no-repeat center center fixed;
       background-size: cover;
       color: #333;
@@ -31,12 +31,12 @@
       z-index: -1;
     }
     
-    /* NHẠC NỀN (ẩn) */
+    /* NHẠC NỀN */
     audio#bgMusic {
       display: none;
     }
-
-    /* HIỆU ỨNG CHO TOÀN BỘ MÀN HÌNH */
+    
+    /* MÀN HÌNH */
     .screen {
       display: none;
       min-height: 100vh;
@@ -108,7 +108,7 @@
       padding: 10px;
       animation: fadeIn 1s ease-out;
     }
-    /* Mỗi mục gồm số thứ tự và container ảnh */
+    /* Mỗi mục bao gồm số thứ tự và container ảnh */
     .image-item {
       display: flex;
       flex-direction: column;
@@ -128,11 +128,11 @@
       margin-bottom: 10px;
       animation: bounce 1s;
     }
-    /* Container ảnh: giảm kích thước xuống 15% từ 700×440px -> 595×374px */
+    /* Container ảnh: giữ kích thước ban đầu là 700×440px */
     .image-container {
       position: relative;
-      width: 595px;
-      height: 374px;
+      width: 700px;
+      height: 440px;
       border: 3px solid #ddd;
       border-radius: 10px;
       overflow: hidden;
@@ -144,11 +144,13 @@
       transform: scale(1.02);
       box-shadow: 0 6px 12px rgba(0,0,0,0.3);
     }
+    /* CHỈNH KÍCH THƯỚC ẢNH: giảm 15% để vừa với ô bao quanh */
     .image-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
       display: block;
+      margin: auto;
     }
     /* Lớp che: sử dụng ảnh natra.jpg, hiệu ứng trượt mượt */
     .cover {
@@ -189,285 +191,4 @@
       margin-top: 20px;
       animation: fadeIn 1s ease-out;
     }
-    /* End Screen */
-    #endScreen h2 {
-      margin-top: 30px;
-      font-size: 1.5rem;
-    }
-    /* KEYFRAMES */
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    @keyframes slideInUp {
-      from { transform: translateY(50px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    @keyframes bounce {
-      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-      40% { transform: translateY(-10px); }
-      60% { transform: translateY(-5px); }
-    }
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-    /* Responsive: trên điện thoại, các mục hiển thị theo hàng dọc */
-    @media (max-width: 768px) {
-      #imageWrapper {
-        flex-direction: column;
-        gap: 20px;
-      }
-      .image-container {
-        width: 90vw;
-        height: auto;
-      }
-      .image-container img {
-        height: auto;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Nhạc nền -->
-  <audio id="bgMusic" src="nhac nen.mp3" loop autoplay></audio>
-
-  <!-- Màn hình Bắt đầu -->
-  <div id="startScreen" class="screen active">
-    <div class="game-container">
-      <h1>Trò chơi: Chọn Ảnh Đúng</h1>
-      <p>
-        Mỗi câu có 3 ảnh (1 đúng, 2 nhiễu).<br>
-        Bạn sẽ được xem ảnh trong 5 giây, sau đó ảnh bị che bằng <em>natra.jpg</em> với hiệu ứng trượt mượt.<br>
-        Hãy nhớ vị trí ảnh đúng, rồi click để bỏ lớp che và chọn đáp án!
-      </p>
-      <button class="btn" id="startBtn">Bắt đầu</button>
-    </div>
-  </div>
-
-  <!-- Màn hình Game -->
-  <div id="gameScreen" class="screen">
-    <div class="game-container">
-      <h2 id="questionTitle">Câu 1</h2>
-      <div id="timerDisplay"></div>
-      <div id="imageWrapper"></div>
-      <button class="btn" id="nextBtn" disabled>Câu tiếp theo</button>
-    </div>
-  </div>
-
-  <!-- Màn hình Kết thúc -->
-  <div id="endScreen" class="screen">
-    <div class="game-container">
-      <h1>Kết thúc trò chơi</h1>
-      <h2 id="resultText"></h2>
-      <button class="btn" id="replayBtn">Chơi lại</button>
-    </div>
-  </div>
-
-  <script>
-    // Khởi tạo âm thanh cho đáp án đúng và sai
-    const audioCorrect = new Audio('true.mp3');
-    const audioWrong = new Audio('failed.mp3');
-
-    const questions = [
-      {
-        word: "face-to-face",
-        correct: "face to face learning.jpg",
-        distractors: ["prepare for.webp", "strategy.webp"]
-      },
-      {
-        word: "prepare",
-        correct: "prepare for.webp",
-        distractors: ["strategy.webp", "online learning.webp"]
-      },
-      {
-        word: "strategy",
-        correct: "strategy.webp",
-        distractors: ["online learning.webp", "blended learning.webp"]
-      },
-      {
-        word: "online learning",
-        correct: "online learning.webp",
-        distractors: ["face to face learning.jpg", "blended learning.webp"]
-      },
-      {
-        word: "blended learning",
-        correct: "blended learning.webp",
-        distractors: ["face to face learning.jpg", "strategy.webp"]
-      }
-    ];
-
-    let currentQuestionIndex = 0;
-    let score = 0;
-    const viewTime = 5; // 5 giây xem ảnh
-    let remainingTime = viewTime;
-    let timerInterval = null;
-    let answerSelected = false; // Đánh dấu đã chọn đáp án đúng hay chưa
-
-    // DOM Elements
-    const startScreen = document.getElementById("startScreen");
-    const gameScreen = document.getElementById("gameScreen");
-    const endScreen = document.getElementById("endScreen");
-
-    const questionTitle = document.getElementById("questionTitle");
-    const timerDisplay = document.getElementById("timerDisplay");
-    const imageWrapper = document.getElementById("imageWrapper");
-    const nextBtn = document.getElementById("nextBtn");
-    const resultText = document.getElementById("resultText");
-
-    const startBtn = document.getElementById("startBtn");
-    const replayBtn = document.getElementById("replayBtn");
-
-    function showScreen(screenName) {
-      startScreen.classList.remove("active");
-      gameScreen.classList.remove("active");
-      endScreen.classList.remove("active");
-      if (screenName === "start") startScreen.classList.add("active");
-      else if (screenName === "game") gameScreen.classList.add("active");
-      else if (screenName === "end") endScreen.classList.add("active");
-    }
-
-    function startGame() {
-      score = 0;
-      currentQuestionIndex = 0;
-      showScreen("game");
-      loadQuestion();
-    }
-
-    function loadQuestion() {
-      clearInterval(timerInterval);
-      imageWrapper.innerHTML = "";
-      remainingTime = viewTime;
-      answerSelected = false;
-      nextBtn.disabled = true;
-      updateTimerDisplay();
-
-      const q = questions[currentQuestionIndex];
-      questionTitle.textContent = `Câu ${currentQuestionIndex + 1}: ${q.word}`;
-      // Tạo mảng 3 ảnh (1 đáp án đúng + 2 nhiễu) và xáo trộn vị trí
-      const allImages = [q.correct, ...q.distractors];
-      shuffleArray(allImages);
-
-      allImages.forEach((imgSrc, index) => {
-        // Tạo phần tử bao bọc cho mỗi mục gồm số thứ tự và container ảnh
-        const item = document.createElement("div");
-        item.className = "image-item";
-
-        // Phần tử số thứ tự
-        const label = document.createElement("div");
-        label.className = "number-label";
-        label.textContent = (index + 1).toString();
-
-        // Tạo container ảnh
-        const container = document.createElement("div");
-        container.className = "image-container";
-
-        const img = document.createElement("img");
-        img.src = imgSrc;
-        img.alt = "option";
-
-        // Tạo lớp che, dấu tích và dấu X
-        const cover = document.createElement("div");
-        cover.className = "cover";
-
-        const checkmark = document.createElement("div");
-        checkmark.className = "checkmark";
-        checkmark.textContent = "✓";
-
-        const wrongmark = document.createElement("div");
-        wrongmark.className = "wrongmark";
-        wrongmark.textContent = "✗";
-
-        container.addEventListener("click", () => {
-          // Cho phép click nếu lớp che đang hiển thị và chưa có đáp án đúng nào được chọn
-          if (!cover.classList.contains("show") || answerSelected) return;
-          // Nếu đáp án đúng
-          if (imgSrc === q.correct) {
-            container.classList.add("selected");
-            cover.classList.remove("show");
-            answerSelected = true;
-            checkmark.style.display = "block";
-            score++;
-            audioCorrect.play();
-            disableAllClicks();
-            nextBtn.disabled = false;
-          } else {
-            // Nếu chọn sai: hiển thị dấu X, phát âm thanh sai, sau 1 giây che lại ảnh để thử lại
-            wrongmark.style.display = "block";
-            audioWrong.play();
-            setTimeout(() => {
-              wrongmark.style.display = "none";
-              cover.classList.add("show");
-            }, 1000);
-            // Không đặt answerSelected = true để cho phép chọn lại
-          }
-        });
-
-        container.appendChild(img);
-        container.appendChild(cover);
-        container.appendChild(checkmark);
-        container.appendChild(wrongmark);
-        item.appendChild(label);
-        item.appendChild(container);
-        imageWrapper.appendChild(item);
-      });
-
-      timerInterval = setInterval(() => {
-        remainingTime--;
-        updateTimerDisplay();
-        if (remainingTime <= 0) {
-          clearInterval(timerInterval);
-          showAllCovers();
-        }
-      }, 1000);
-    }
-
-    function showAllCovers() {
-      const covers = document.querySelectorAll(".cover");
-      covers.forEach(cover => {
-        cover.classList.add("show");
-      });
-    }
-
-    function updateTimerDisplay() {
-      timerDisplay.textContent = `Thời gian xem ảnh: ${remainingTime}s`;
-    }
-
-    function disableAllClicks() {
-      const containers = document.querySelectorAll(".image-container");
-      containers.forEach(c => {
-        c.style.pointerEvents = "none";
-      });
-    }
-
-    nextBtn.addEventListener("click", () => {
-      if (!answerSelected) return;
-      currentQuestionIndex++;
-      if (currentQuestionIndex < questions.length) {
-        loadQuestion();
-      } else {
-        endGame();
-      }
-    });
-
-    function endGame() {
-      showScreen("end");
-      resultText.textContent = `Bạn đã chọn đúng ${score}/${questions.length} câu.`;
-    }
-
-    function shuffleArray(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-    }
-
-    startBtn.addEventListener("click", startGame);
-    replayBtn.addEventListener("click", () => {
-      showScreen("start");
-    });
-  </script>
-</body>
-</html>
+ 
