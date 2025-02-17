@@ -1,224 +1,175 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <title>Trò chơi Từ vựng</title>
+  <meta charset="UTF-8">
+  <title>Game Chọn Ảnh Đúng</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
     body {
-      margin: 0;
-      font-family: sans-serif;
-      background: #f7f7f7;
+      margin: 0; 
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
       color: #333;
     }
-    /* 3 màn hình chính */
     .screen {
       display: none;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
       min-height: 100vh;
       padding: 20px;
+      box-sizing: border-box;
+      text-align: center;
     }
-    #start-screen,
-    #game-screen,
-    #end-screen {
-      display: none; /* Mặc định ẩn */
-    }
-    /* Khi muốn hiển thị, ta dùng JS để đổi thành flex */
     .active {
-      display: flex !important;
+      display: block;
     }
-
-    /* Các khối input, nút */
-    .input-row {
+    h1, h2 {
       margin: 10px 0;
     }
-    input[type="text"], input[type="number"] {
-      padding: 5px;
-      width: 200px;
-    }
-    button {
-      cursor: pointer;
+    .btn {
+      display: inline-block;
       padding: 10px 20px;
       margin: 5px;
-    }
-    button:hover {
+      cursor: pointer;
       background: #ddd;
+      border: none;
+      border-radius: 4px;
     }
-    h1, h2, h3 {
-      margin: 10px 0;
-      text-align: center;
+    .btn:hover {
+      background: #ccc;
     }
-
-    /* Phần game */
-    #header {
+    /* Khối ảnh */
+    .image-container {
+      display: inline-block;
+      position: relative;
+      margin: 10px;
+      cursor: pointer;
+    }
+    .image-container img {
+      width: 200px;
+      height: 120px;
+      object-fit: cover;
+      border: 2px solid transparent;
+      border-radius: 6px;
+    }
+    .cover {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
       display: flex;
-      width: 100%;
-      justify-content: space-around;
+      justify-content: center;
       align-items: center;
-      margin-bottom: 20px;
       font-size: 1.2rem;
+      border-radius: 6px;
     }
-    #timer {
-      color: red;
+    /* Thông báo đúng/sai */
+    .checkmark {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 2rem;
       font-weight: bold;
+      color: green; /* ✓ màu xanh */
+      display: none;
     }
-    #question-area {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    #question-image {
-      max-width: 300px;
-      margin-top: 10px;
-    }
-    .btn-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
+    .wrongmark {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 2rem;
+      font-weight: bold;
+      color: red;   /* ✗ màu đỏ */
+      display: none;
     }
   </style>
 </head>
 <body>
 
-<!-- Màn hình START -->
-<div id="start-screen" class="screen active">
-  <div>
-    <h1>Thiết lập trò chơi</h1>
-    <div class="input-row">
-      <label>Tên đội 1: </label>
-      <input type="text" id="team1NameInput" value="Team 1" />
-    </div>
-    <div class="input-row">
-      <label>Tên đội 2: </label>
-      <input type="text" id="team2NameInput" value="Team 2" />
-    </div>
-    <div class="input-row">
-      <label>Thời gian mỗi câu (giây): </label>
-      <input type="number" id="timeInput" value="30" />
-    </div>
-    <button id="startBtn">START</button>
+<!-- Màn hình bắt đầu -->
+<div id="startScreen" class="screen active">
+  <h1>Trò chơi: Chọn Ảnh Đúng</h1>
+  <p>Mỗi câu có 3 ảnh, xem ảnh trong 6 giây rồi bị che lại. Sau đó từ khóa xuất hiện, bạn phải chọn đúng ảnh đã xem ban đầu.</p>
+  <button class="btn" id="startBtn">Bắt đầu</button>
+</div>
+
+<!-- Màn hình chơi game -->
+<div id="gameScreen" class="screen">
+  <h2 id="questionTitle">Câu 1</h2>
+  <p><strong>Từ khóa:</strong> <span id="keyword"></span></p>
+  
+  <div id="imageWrapper"></div>
+
+  <div style="margin-top: 20px;">
+    <button class="btn" id="nextBtn" style="display: none;">Câu tiếp theo</button>
   </div>
 </div>
 
-<!-- Màn hình GAME -->
-<div id="game-screen" class="screen">
-  <!-- Header hiển thị điểm 2 đội + timer -->
-  <div id="header">
-    <div id="team1Score"></div>
-    <div id="timer"></div>
-    <div id="team2Score"></div>
-  </div>
-
-  <!-- Nội dung câu hỏi -->
-  <div id="question-area">
-    <h2 id="question-title"></h2>
-    <p><em id="question-hint"></em></p>
-    <img id="question-image" src="" alt="Question Image" />
-  </div>
-
-  <!-- Nút cộng điểm -->
-  <div class="btn-row">
-    <button id="team1CorrectBtn">Team 1 Trả lời đúng</button>
-    <button id="team2CorrectBtn">Team 2 Trả lời đúng</button>
-  </div>
-
-  <!-- Nút Next / Finish -->
-  <div class="btn-row">
-    <button id="nextBtn">Next</button>
-    <button id="finishBtn" style="display:none;">Finish</button>
-  </div>
-</div>
-
-<!-- Màn hình END -->
-<div id="end-screen" class="screen">
-  <h1>Kết quả chung cuộc</h1>
-  <h2 id="finalResult"></h2>
-  <button id="playAgainBtn">Chơi lại</button>
+<!-- Màn hình kết thúc -->
+<div id="endScreen" class="screen">
+  <h1>Kết thúc trò chơi</h1>
+  <h2 id="resultText"></h2>
+  <button class="btn" id="replayBtn">Chơi lại</button>
 </div>
 
 <script>
-  // ------------------------------------------------------
-  // 1. DỮ LIỆU CÂU HỎI
-  // ------------------------------------------------------
+  /************************************************************
+   * 1. DỮ LIỆU CÂU HỎI
+   ************************************************************/
+  // Mỗi câu: word (từ khóa), correct (ảnh đúng), distractors (mảng 2 ảnh sai)
+  // Bạn có thể tùy chỉnh distractors theo ý muốn
   const questions = [
     {
-      word: "Face-to-face",
-      hint: "Học trực tiếp tại lớp",
-      image: "face_to_face_learning.jpg"
+      word: "face-to-face",
+      correct: "face to face learning.jpg",
+      distractors: ["prepare for.webp", "strategy.webp"]
     },
     {
-      word: "Prepare",
-      hint: "Chuẩn bị",
-      image: "prepare_for.webp"
+      word: "prepare",
+      correct: "prepare for.webp",
+      distractors: ["strategy.webp", "online learning.webp"]
     },
     {
-      word: "Strategy",
-      hint: "Chiến lược",
-      image: "strategy.webp"
+      word: "strategy",
+      correct: "strategy.webp",
+      distractors: ["online learning.webp", "blended learning.webp"]
     },
     {
-      word: "Online learning",
-      hint: "Học trực tuyến",
-      image: "online_learning.webp"
+      word: "online learning",
+      correct: "online learning.webp",
+      distractors: ["face to face learning.jpg", "blended learning.webp"]
     },
     {
-      word: "Blended learning",
-      hint: "Học kết hợp (trực tuyến + trực tiếp)",
-      image: "blended_learning.webp"
+      word: "blended learning",
+      correct: "blended learning.webp",
+      distractors: ["face to face learning.jpg", "strategy.webp"]
     }
   ];
 
-  // ------------------------------------------------------
-  // 2. BIẾN QUẢN LÝ TRẠNG THÁI
-  // ------------------------------------------------------
   let currentQuestionIndex = 0;
-  let team1Name = "Team 1";
-  let team2Name = "Team 2";
-  let team1Score = 0;
-  let team2Score = 0;
-  let chosenTime = 30; // thời gian mỗi câu
-  let timeLeft = 30;   // biến đếm ngược
-  let timerInterval = null;
+  let score = 0;  // đếm số câu chọn đúng
+  const totalTimeToShow = 6000; // 6 giây
 
-  // Lấy các phần tử HTML
-  const startScreen = document.getElementById("start-screen");
-  const gameScreen = document.getElementById("game-screen");
-  const endScreen = document.getElementById("end-screen");
+  // Lấy các phần tử DOM
+  const startScreen = document.getElementById("startScreen");
+  const gameScreen = document.getElementById("gameScreen");
+  const endScreen = document.getElementById("endScreen");
 
-  const team1NameInput = document.getElementById("team1NameInput");
-  const team2NameInput = document.getElementById("team2NameInput");
-  const timeInput = document.getElementById("timeInput");
+  const questionTitle = document.getElementById("questionTitle");
+  const keywordEl = document.getElementById("keyword");
+  const imageWrapper = document.getElementById("imageWrapper");
+  const nextBtn = document.getElementById("nextBtn");
+  const resultText = document.getElementById("resultText");
 
   const startBtn = document.getElementById("startBtn");
-  const nextBtn = document.getElementById("nextBtn");
-  const finishBtn = document.getElementById("finishBtn");
-  const playAgainBtn = document.getElementById("playAgainBtn");
+  const replayBtn = document.getElementById("replayBtn");
 
-  const team1ScoreDisplay = document.getElementById("team1Score");
-  const team2ScoreDisplay = document.getElementById("team2Score");
-  const timerDisplay = document.getElementById("timer");
-
-  const questionTitle = document.getElementById("question-title");
-  const questionHint = document.getElementById("question-hint");
-  const questionImage = document.getElementById("question-image");
-
-  const team1CorrectBtn = document.getElementById("team1CorrectBtn");
-  const team2CorrectBtn = document.getElementById("team2CorrectBtn");
-
-  const finalResult = document.getElementById("finalResult");
-
-  // ------------------------------------------------------
-  // 3. HÀM CHUYỂN MÀN HÌNH
-  // ------------------------------------------------------
+  /************************************************************
+   * 2. HÀM HIỂN THỊ MÀN HÌNH
+   ************************************************************/
   function showScreen(screenName) {
-    // Ẩn hết
     startScreen.classList.remove("active");
     gameScreen.classList.remove("active");
     endScreen.classList.remove("active");
-    // Hiển thị màn hình mong muốn
+
     if (screenName === "start") {
       startScreen.classList.add("active");
     } else if (screenName === "game") {
@@ -228,144 +179,145 @@
     }
   }
 
-  // ------------------------------------------------------
-  // 4. BẮT ĐẦU TRÒ CHƠI
-  // ------------------------------------------------------
+  /************************************************************
+   * 3. BẮT ĐẦU GAME
+   ************************************************************/
   function startGame() {
-    // Lấy thông tin từ input
-    team1Name = team1NameInput.value || "Team 1";
-    team2Name = team2NameInput.value || "Team 2";
-    chosenTime = parseInt(timeInput.value) || 30;
-
-    // Đặt lại điểm và câu hỏi
-    team1Score = 0;
-    team2Score = 0;
+    score = 0;
     currentQuestionIndex = 0;
-
-    // Chuyển sang màn hình game
     showScreen("game");
     loadQuestion();
   }
 
-  // ------------------------------------------------------
-  // 5. HIỂN THỊ CÂU HỎI
-  // ------------------------------------------------------
+  /************************************************************
+   * 4. HIỂN THỊ CÂU HỎI
+   ************************************************************/
   function loadQuestion() {
-    // Nếu hết câu hỏi -> sang màn hình end
-    if (currentQuestionIndex >= questions.length) {
-      finishGame();
-      return;
-    }
+    // Ẩn nút "Câu tiếp theo"
+    nextBtn.style.display = "none";
 
-    // Lấy câu hỏi hiện tại
-    const q = questions[currentQuestionIndex];
+    // Lấy question hiện tại
+    const question = questions[currentQuestionIndex];
 
-    // Cập nhật nội dung
-    questionTitle.textContent = `Câu ${currentQuestionIndex + 1}: ${q.word}`;
-    questionHint.textContent = q.hint;
-    questionImage.src = q.image;
+    // Cập nhật tiêu đề
+    questionTitle.textContent = `Câu ${currentQuestionIndex + 1}`;
+    keywordEl.textContent = ""; // chưa hiển thị từ khóa ngay
 
-    // Cập nhật điểm
-    team1ScoreDisplay.textContent = `${team1Name}: ${team1Score}`;
-    team2ScoreDisplay.textContent = `${team2Name}: ${team2Score}`;
+    // Tạo mảng 3 ảnh (1 đúng + 2 sai), xáo trộn vị trí
+    const allImages = [question.correct, ...question.distractors];
+    shuffleArray(allImages);
 
-    // Hiển thị/ẩn nút Next/Finish
-    if (currentQuestionIndex < questions.length - 1) {
-      nextBtn.style.display = "inline-block";
-      finishBtn.style.display = "none";
-    } else {
-      nextBtn.style.display = "none";
-      finishBtn.style.display = "inline-block";
-    }
+    // Xóa nội dung cũ
+    imageWrapper.innerHTML = "";
 
-    // Cài lại thời gian
-    timeLeft = chosenTime;
-    updateTimer();
-    startTimer();
+    // Tạo DOM cho 3 ảnh
+    allImages.forEach((imgSrc) => {
+      const container = document.createElement("div");
+      container.className = "image-container";
+
+      const img = document.createElement("img");
+      img.src = imgSrc;
+      img.alt = "option";
+
+      // Overlay che ảnh (sau 6s sẽ áp dụng)
+      const coverDiv = document.createElement("div");
+      coverDiv.className = "cover";
+      coverDiv.style.display = "none"; 
+      coverDiv.textContent = "?";
+
+      // Dấu ✓ / ✗
+      const checkmark = document.createElement("div");
+      checkmark.className = "checkmark";
+      checkmark.textContent = "✓";
+      const wrongmark = document.createElement("div");
+      wrongmark.className = "wrongmark";
+      wrongmark.textContent = "✗";
+
+      // Khi click vào ảnh
+      container.addEventListener("click", () => {
+        // Chỉ cho phép chọn ảnh sau khi từ khóa đã xuất hiện
+        if (keywordEl.textContent === "") return;
+
+        // Kiểm tra đúng/sai
+        if (imgSrc === question.correct) {
+          checkmark.style.display = "block";
+          score++;
+        } else {
+          wrongmark.style.display = "block";
+        }
+
+        // Khóa không cho click nữa (có thể bằng cách removeEventListener hoặc thêm cờ)
+        disableAllClicks();
+        // Hiện nút "Câu tiếp theo" hoặc "Kết thúc"
+        nextBtn.style.display = "inline-block";
+      });
+
+      container.appendChild(img);
+      container.appendChild(coverDiv);
+      container.appendChild(checkmark);
+      container.appendChild(wrongmark);
+      imageWrapper.appendChild(container);
+    });
+
+    // Hiển thị ảnh trong 6s, sau đó che + hiện từ khóa
+    setTimeout(() => {
+      // Che tất cả ảnh
+      const covers = document.querySelectorAll(".image-container .cover");
+      covers.forEach((cover) => {
+        cover.style.display = "flex"; // hiện lớp che
+      });
+      // Hiện từ khóa
+      keywordEl.textContent = question.word;
+    }, totalTimeToShow);
   }
 
-  // ------------------------------------------------------
-  // 6. QUẢN LÝ TIMER
-  // ------------------------------------------------------
-  function startTimer() {
-    stopTimer(); // clear bất kỳ interval cũ
-    timerInterval = setInterval(() => {
-      timeLeft--;
-      if (timeLeft <= 0) {
-        timeLeft = 0;
-        stopTimer();
-      }
-      updateTimer();
-    }, 1000);
+  /************************************************************
+   * 5. DISABLE CLICK SAU KHI CHỌN
+   ************************************************************/
+  function disableAllClicks() {
+    const containers = document.querySelectorAll(".image-container");
+    containers.forEach((c) => {
+      c.style.pointerEvents = "none"; // vô hiệu hóa click
+    });
   }
 
-  function stopTimer() {
-    if (timerInterval) {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
-  }
-
-  function updateTimer() {
-    timerDisplay.textContent = `${timeLeft}s`;
-  }
-
-  // ------------------------------------------------------
-  // 7. SỰ KIỆN CỘNG ĐIỂM
-  // ------------------------------------------------------
-  function team1Correct() {
-    team1Score++;
-    team1ScoreDisplay.textContent = `${team1Name}: ${team1Score}`;
-  }
-
-  function team2Correct() {
-    team2Score++;
-    team2ScoreDisplay.textContent = `${team2Name}: ${team2Score}`;
-  }
-
-  // ------------------------------------------------------
-  // 8. NEXT VÀ FINISH
-  // ------------------------------------------------------
-  function nextQuestion() {
-    stopTimer();
+  /************************************************************
+   * 6. NEXT QUESTION
+   ************************************************************/
+  nextBtn.addEventListener("click", () => {
     currentQuestionIndex++;
-    loadQuestion();
-  }
-
-  function finishGame() {
-    stopTimer();
-    showScreen("end");
-    // Tính kết quả
-    let resultText = `${team1Name}: ${team1Score} điểm\n` +
-                     `${team2Name}: ${team2Score} điểm\n\n`;
-    if (team1Score === team2Score) {
-      resultText += "Hòa nhau!";
-    } else if (team1Score > team2Score) {
-      resultText += `${team1Name} Chiến thắng!`;
+    if (currentQuestionIndex < questions.length) {
+      loadQuestion();
     } else {
-      resultText += `${team2Name} Chiến thắng!`;
+      endGame();
     }
-    finalResult.textContent = resultText;
+  });
+
+  /************************************************************
+   * 7. KẾT THÚC GAME
+   ************************************************************/
+  function endGame() {
+    showScreen("end");
+    resultText.textContent = `Bạn trả lời đúng ${score}/${questions.length} câu.`;
   }
 
-  // ------------------------------------------------------
-  // 9. CHƠI LẠI
-  // ------------------------------------------------------
-  function playAgain() {
-    showScreen("start");
+  /************************************************************
+   * 8. XÁO TRỘN MẢNG
+   ************************************************************/
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
   }
 
-  // ------------------------------------------------------
-  // 10. GẮN SỰ KIỆN CHO NÚT
-  // ------------------------------------------------------
+  /************************************************************
+   * 9. SỰ KIỆN CHO NÚT
+   ************************************************************/
   startBtn.addEventListener("click", startGame);
-  nextBtn.addEventListener("click", nextQuestion);
-  finishBtn.addEventListener("click", finishGame);
-  playAgainBtn.addEventListener("click", playAgain);
-
-  team1CorrectBtn.addEventListener("click", team1Correct);
-  team2CorrectBtn.addEventListener("click", team2Correct);
+  replayBtn.addEventListener("click", () => {
+    showScreen("start");
+  });
 </script>
-
 </body>
 </html>
