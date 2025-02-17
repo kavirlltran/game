@@ -173,6 +173,7 @@
       transform-origin: top;
       transition: transform 0.5s ease;
       z-index: 5;
+      pointer-events: none; /* Cho phép click xuyên qua lớp che */
     }
     .cover.show {
       transform: scaleY(1);
@@ -189,6 +190,7 @@
       display: none;
       z-index: 50;
       animation: fadeIn 0.5s;
+      pointer-events: none;
     }
     .checkmark { color: green; }
     .wrongmark { color: red; }
