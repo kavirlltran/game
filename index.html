@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
@@ -345,7 +346,7 @@
       updateTimerDisplay();
       
       // Ban đầu chỉ hiển thị "Question X"
-      questionTitle.textContent = Question ${currentQuestionIndex + 1};
+      questionTitle.textContent = `Question ${currentQuestionIndex + 1}`;
       
       const q = questions[currentQuestionIndex];
       const allImages = [q.correct, ...q.distractors];
@@ -415,7 +416,7 @@
           canSelect = true;
           // Sau 6s, cập nhật tiêu đề câu hỏi thành "Question X: [word]"
           const q = questions[currentQuestionIndex];
-          questionTitle.textContent = Question ${currentQuestionIndex + 1}: ${q.word};
+          questionTitle.textContent = `Question ${currentQuestionIndex + 1}: ${q.word}`;
         }
       }, 1000);
     }
@@ -428,7 +429,7 @@
     }
     
     function updateTimerDisplay() {
-      timerDisplay.textContent = Thời gian xem ảnh: ${remainingTime}s;
+      timerDisplay.textContent = `Thời gian xem ảnh: ${remainingTime}s`;
     }
     
     function disableAllClicks() {
@@ -450,7 +451,7 @@
     
     function endGame() {
       showScreen("end");
-      resultText.textContent = Bạn đã chọn đúng ${score}/${questions.length} câu.;
+      resultText.textContent = `Bạn đã chọn đúng ${score}/${questions.length} câu.`;
     }
     
     function shuffleArray(array) {
