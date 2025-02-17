@@ -2,22 +2,24 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Game Chọn Ảnh Đúng – Responsive 3D</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trò chơi Chọn Ảnh – 5s Xem Ảnh</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* Reset và font */
+    /* RESET CƠ BẢN */
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
       background: #f0f0f0;
       color: #333;
       text-align: center;
-      padding: 20px;
+      padding: 10px;
     }
-    /* Màn hình */
+
+    /* CÁC MÀN HÌNH CHÍNH */
     .screen {
       display: none;
       min-height: 100vh;
@@ -26,9 +28,22 @@
     .active {
       display: block;
     }
+
+    /* KHUNG CHUNG CHỨA NỘI DUNG GAME */
+    .game-container {
+      background: #fff;
+      border: 4px solid #ccc;
+      border-radius: 10px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
     h1, h2, h3, p {
       margin: 10px 0;
     }
+
+    /* NÚT CHUNG */
     .btn {
       display: inline-block;
       padding: 10px 20px;
@@ -38,62 +53,91 @@
       color: #fff;
       border: none;
       border-radius: 4px;
-      transition: background 0.3s;
+      font-size: 1rem;
     }
     .btn:hover {
       background: #005fa3;
     }
-    /* Khung ảnh 3D */
-    .image-container {
-      display: inline-block;
-      position: relative;
-      margin: 10px;
-      cursor: pointer;
-      border: 2px solid #ddd;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-      transition: transform 0.3s, box-shadow 0.3s;
-      overflow: hidden;
-      background: #fff;
+
+    /* TIÊU ĐỀ CÂU HỎI, TỪ KHÓA */
+    #questionTitle {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
     }
-    /* Kích thước ảnh lớn hơn, responsive */
+    #keyword {
+      display: block;
+      font-size: 2rem;        /* lớn hơn */
+      font-weight: bold;      /* in đậm */
+      color: #ffc107;         /* vàng */
+      margin: 10px 0 20px 0;
+    }
+
+    /* HIỂN THỊ THỜI GIAN XEM ẢNH 5S */
+    #timerDisplay {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: red;
+    }
+
+    /* KHU VỰC CHỨA 3 ẢNH */
+    #imageWrapper {
+      display: flex;
+      justify-content: center;
+      gap: 30px; /* khoảng cách giữa 3 ảnh */
+      flex-wrap: wrap; /* xuống hàng trên mobile */
+      margin-top: 20px;
+    }
+    .image-container {
+      position: relative;
+      width: 250px;  /* cố định chiều rộng để giữ tỉ lệ */
+      height: 180px; /* chiều cao tương đối */
+      border: 3px solid #ddd;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #eee;
+      cursor: pointer;
+    }
+    /* ẢNH BÊN TRONG */
     .image-container img {
-      width: 300px;
-      height: 200px;
+      width: 100%;
+      height: 100%;
       object-fit: cover;
       display: block;
     }
-    /* Hiệu ứng nổi khi chọn */
-    .image-container.selected {
-      transform: scale(1.1);
-      z-index: 10;
-      box-shadow: 0 8px 12px rgba(0,0,0,0.4);
+    /* NHÃN SỐ THỨ TỰ 1,2,3 */
+    .number-label {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      background: #ff9800;
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: bold;
     }
-    /* Overlay che ảnh */
+
+    /* CHE ẢNH HOÀN TOÀN (KHÔNG TRONG SUỐT) */
     .cover {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      color: #fff;
-      display: flex;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #000; /* đen hoàn toàn */
+      display: none;    /* ẩn ban đầu */
       justify-content: center;
       align-items: center;
-      font-size: 2rem;
-      border-radius: 10px;
-      display: none; /* ẩn ban đầu */
     }
-    /* Dấu tích và dấu X */
+
+    /* DẤU ✓ / ✗ */
     .checkmark, .wrongmark {
       position: absolute;
-      top: 8px;
-      right: 8px;
-      font-size: 2.5rem;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 3rem;
       font-weight: bold;
-      z-index: 20;
       display: none;
+      z-index: 2;
     }
     .checkmark {
       color: green;
@@ -101,16 +145,26 @@
     .wrongmark {
       color: red;
     }
-    /* Timer hiển thị (có đếm ngược) */
-    #timerDisplay {
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin: 10px 0;
+
+    /* NÚT NEXT Ở DƯỚI */
+    #nextBtn {
+      margin-top: 20px;
     }
-    /* Responsive: với màn hình nhỏ, ảnh sẽ chiếm 90% chiều rộng */
-    @media (max-width: 600px) {
+
+    /* MÀN HÌNH KẾT THÚC */
+    #endScreen h2 {
+      margin-top: 30px;
+      font-size: 1.5rem;
+    }
+
+    /* RESPONSIVE CHO MÀN HÌNH NHỎ */
+    @media (max-width: 768px) {
+      .image-container {
+        width: 80%;
+        height: auto;
+        margin-bottom: 20px;
+      }
       .image-container img {
-        width: 90vw;
         height: auto;
       }
     }
@@ -118,44 +172,45 @@
 </head>
 <body>
 
-<!-- Màn hình bắt đầu -->
+<!-- MÀN HÌNH BẮT ĐẦU -->
 <div id="startScreen" class="screen active">
-  <h1>Trò chơi: Chọn Ảnh Đúng – 3D & Timer</h1>
-  <p>
-    Mỗi câu hiển thị 3 ảnh (một trong số đó là đáp án đúng).<br>
-    Bạn có 6 giây để xem ảnh ban đầu. Sau 6 giây, ảnh sẽ bị che và từ khóa xuất hiện, kèm đếm ngược 30s để trả lời.<br>
-    Hãy nhớ vị trí ảnh đúng và chọn nó!
-  </p>
-  <button class="btn" id="startBtn">Bắt đầu</button>
+  <div class="game-container">
+    <h1>Trò chơi: Chọn Ảnh Đúng</h1>
+    <p>Mỗi câu có 3 ảnh (1 đúng, 2 sai). Bạn có 5 giây để xem ảnh, sau đó ảnh sẽ bị che hoàn toàn, từ khóa hiện ra. Hãy nhớ vị trí ảnh đúng và chọn!</p>
+    <button class="btn" id="startBtn">Bắt đầu</button>
+  </div>
 </div>
 
-<!-- Màn hình chơi game -->
+<!-- MÀN HÌNH GAME -->
 <div id="gameScreen" class="screen">
-  <h2 id="questionTitle">Câu 1</h2>
-  <!-- Timer hiển thị (6s xem ảnh / 30s trả lời) -->
-  <div id="timerDisplay"></div>
-  <!-- Từ khóa (sẽ xuất hiện sau khi hết thời gian xem) -->
-  <p><strong>Từ khóa:</strong> <span id="keyword"></span></p>
-  
-  <div id="imageWrapper"></div>
+  <div class="game-container">
+    <h2 id="questionTitle">Câu 1</h2>
+    <div id="timerDisplay"></div>
+    <!-- TỪ KHÓA (sau 5s mới hiển thị) -->
+    <span id="keyword"></span>
 
-  <div style="margin-top: 20px;">
+    <!-- KHỐI 3 ẢNH -->
+    <div id="imageWrapper"></div>
+
+    <!-- NÚT NEXT -->
     <button class="btn" id="nextBtn" style="display: none;">Câu tiếp theo</button>
   </div>
 </div>
 
-<!-- Màn hình kết thúc -->
+<!-- MÀN HÌNH KẾT THÚC -->
 <div id="endScreen" class="screen">
-  <h1>Kết thúc trò chơi</h1>
-  <h2 id="resultText"></h2>
-  <button class="btn" id="replayBtn">Chơi lại</button>
+  <div class="game-container">
+    <h1>Kết thúc trò chơi</h1>
+    <h2 id="resultText"></h2>
+    <button class="btn" id="replayBtn">Chơi lại</button>
+  </div>
 </div>
 
 <script>
   /************************************************************
    * 1. DỮ LIỆU CÂU HỎI
    ************************************************************/
-  // Mỗi câu: từ khóa, ảnh đúng, 2 ảnh gây nhiễu
+  // Mỗi câu: từ khóa (word), ảnh đúng (correct), 2 ảnh nhiễu (distractors)
   const questions = [
     {
       word: "face-to-face",
@@ -185,23 +240,19 @@
   ];
 
   let currentQuestionIndex = 0;
-  let score = 0;  
-  const viewTime = 6;      // thời gian xem ảnh (6 giây)
-  const answerTime = 30;   // thời gian trả lời (30 giây)
+  let score = 0;
+  let viewTime = 5; // 5 giây xem ảnh
   let timerInterval = null;
-  let remainingTime = 0;   // biến đếm ngược
+  let remainingTime = viewTime;
 
-  // Các giai đoạn của câu hỏi: "view" hoặc "answer"
-  let questionPhase = "view";
-
-  // Lấy các phần tử DOM
+  // DOM
   const startScreen = document.getElementById("startScreen");
   const gameScreen = document.getElementById("gameScreen");
   const endScreen = document.getElementById("endScreen");
 
   const questionTitle = document.getElementById("questionTitle");
-  const keywordEl = document.getElementById("keyword");
   const timerDisplay = document.getElementById("timerDisplay");
+  const keywordEl = document.getElementById("keyword");
   const imageWrapper = document.getElementById("imageWrapper");
   const nextBtn = document.getElementById("nextBtn");
   const resultText = document.getElementById("resultText");
@@ -210,7 +261,7 @@
   const replayBtn = document.getElementById("replayBtn");
 
   /************************************************************
-   * 2. CHUYỂN ĐỔI MÀN HÌNH
+   * 2. CHUYỂN MÀN HÌNH
    ************************************************************/
   function showScreen(screenName) {
     startScreen.classList.remove("active");
@@ -227,7 +278,7 @@
   }
 
   /************************************************************
-   * 3. KHỞI ĐỘNG TRÒ CHƠI
+   * 3. BẮT ĐẦU GAME
    ************************************************************/
   function startGame() {
     score = 0;
@@ -237,45 +288,43 @@
   }
 
   /************************************************************
-   * 4. HIỂN THỊ CÂU HỎI VỚI TIMER
+   * 4. TẢI CÂU HỎI
    ************************************************************/
   function loadQuestion() {
-    // Reset trạng thái nút
-    nextBtn.style.display = "none";
+    // Reset
     keywordEl.textContent = "";
+    nextBtn.style.display = "none";
+    imageWrapper.innerHTML = "";
     clearInterval(timerInterval);
 
-    // Xóa nội dung cũ
-    imageWrapper.innerHTML = "";
-
-    // Thiết lập giai đoạn xem ảnh
-    questionPhase = "view";
-    remainingTime = viewTime;
-    updateTimerDisplay();
-
-    // Lấy dữ liệu câu hỏi hiện tại
+    // Lấy câu hỏi
     const question = questions[currentQuestionIndex];
     questionTitle.textContent = `Câu ${currentQuestionIndex + 1}`;
 
-    // Tạo mảng 3 ảnh (1 đúng + 2 sai) và xáo trộn vị trí
+    // Tạo mảng 3 ảnh
     const allImages = [question.correct, ...question.distractors];
     shuffleArray(allImages);
 
-    // Tạo DOM cho từng ảnh
-    allImages.forEach((imgSrc) => {
+    // Tạo DOM 3 ảnh
+    allImages.forEach((imgSrc, index) => {
       const container = document.createElement("div");
       container.className = "image-container";
 
+      // Ảnh
       const img = document.createElement("img");
       img.src = imgSrc;
       img.alt = "option";
 
-      // Overlay che ảnh (sẽ xuất hiện sau thời gian xem)
-      const coverDiv = document.createElement("div");
-      coverDiv.className = "cover";
-      coverDiv.textContent = "?";
+      // Số thứ tự
+      const label = document.createElement("div");
+      label.className = "number-label";
+      label.textContent = (index + 1).toString();
 
-      // Dấu tích / dấu X
+      // Overlay che hoàn toàn
+      const cover = document.createElement("div");
+      cover.className = "cover";
+
+      // Dấu ✓ / ✗
       const checkmark = document.createElement("div");
       checkmark.className = "checkmark";
       checkmark.textContent = "✓";
@@ -283,91 +332,73 @@
       wrongmark.className = "wrongmark";
       wrongmark.textContent = "✗";
 
-      // Khi click vào ảnh (chỉ cho phép khi ở giai đoạn trả lời)
+      // Xử lý khi click ảnh
       container.addEventListener("click", () => {
-        if (questionPhase !== "answer") return;
+        // Chỉ cho phép click khi ảnh đã bị che (tức sau 5s)
+        if (cover.style.display !== "flex") return;
 
-        // Nếu đã có ảnh được chọn rồi thì bỏ qua
+        // Nếu đã chọn 1 ảnh rồi, không cho chọn lại
         if (document.querySelector(".image-container.selected")) return;
 
+        // Đánh dấu ảnh được chọn
         container.classList.add("selected");
 
-        // Xóa bộ đếm trả lời
-        clearInterval(timerInterval);
-
-        // Kiểm tra đáp án
+        // Kiểm tra đúng/sai
         if (imgSrc === question.correct) {
           checkmark.style.display = "block";
           score++;
         } else {
           wrongmark.style.display = "block";
         }
-        // Vô hiệu hóa tất cả các click
-        disableAllClicks();
 
+        // Vô hiệu hóa click tiếp
+        disableAllClicks();
         // Hiện nút "Câu tiếp theo"
         nextBtn.style.display = "inline-block";
       });
 
       container.appendChild(img);
-      container.appendChild(coverDiv);
+      container.appendChild(label);
+      container.appendChild(cover);
       container.appendChild(checkmark);
       container.appendChild(wrongmark);
       imageWrapper.appendChild(container);
     });
 
-    // Bắt đầu bộ đếm cho giai đoạn xem ảnh (6s)
+    // Bắt đầu đếm 5s cho giai đoạn xem ảnh
+    remainingTime = viewTime;
+    updateTimer();
     timerInterval = setInterval(() => {
       remainingTime--;
-      updateTimerDisplay();
+      updateTimer();
       if (remainingTime <= 0) {
         clearInterval(timerInterval);
-        // Sau 6 giây, chuyển sang giai đoạn trả lời:
-        startAnswerPhase();
-      }
-    }, 1000);
-  }
-
-  // Cập nhật nội dung timer
-  function updateTimerDisplay() {
-    if (questionPhase === "view") {
-      timerDisplay.textContent = `Thời gian xem ảnh: ${remainingTime}s`;
-    } else if (questionPhase === "answer") {
-      timerDisplay.textContent = `Thời gian trả lời: ${remainingTime}s`;
-    }
-  }
-
-  // Khi hết thời gian xem, che ảnh và chuyển sang giai đoạn trả lời (30s)
-  function startAnswerPhase() {
-    // Che tất cả ảnh bằng overlay
-    const covers = document.querySelectorAll(".image-container .cover");
-    covers.forEach((cover) => {
-      cover.style.display = "flex";
-    });
-    // Hiển thị từ khóa
-    const question = questions[currentQuestionIndex];
-    keywordEl.textContent = question.word;
-    // Chuyển sang giai đoạn trả lời
-    questionPhase = "answer";
-    remainingTime = answerTime;
-    updateTimerDisplay();
-
-    // Bắt đầu bộ đếm cho giai đoạn trả lời
-    timerInterval = setInterval(() => {
-      remainingTime--;
-      updateTimerDisplay();
-      if (remainingTime <= 0) {
-        clearInterval(timerInterval);
-        // Nếu hết thời gian mà chưa chọn, vô hiệu hóa các click
-        disableAllClicks();
-        // Hiện nút "Câu tiếp theo"
-        nextBtn.style.display = "inline-block";
+        // Hết 5s -> che ảnh, hiển thị keyword
+        hideAllImages();
+        keywordEl.textContent = question.word;
       }
     }, 1000);
   }
 
   /************************************************************
-   * 5. VÔ HIỆU HÓA CLICK SAU KHI ĐÃ CHỌN
+   * 5. CHE ẢNH HOÀN TOÀN SAU 5S
+   ************************************************************/
+  function hideAllImages() {
+    const covers = document.querySelectorAll(".cover");
+    covers.forEach((cover) => {
+      cover.style.display = "flex";
+    });
+  }
+
+  /************************************************************
+   * 6. CẬP NHẬT HIỂN THỊ TIMER
+   ************************************************************/
+  function updateTimer() {
+    timerDisplay.textContent = `Thời gian xem ảnh: ${remainingTime}s`;
+  }
+
+  /************************************************************
+   * 7. VÔ HIỆU HÓA CLICK SAU KHI CHỌN
    ************************************************************/
   function disableAllClicks() {
     const containers = document.querySelectorAll(".image-container");
@@ -377,11 +408,10 @@
   }
 
   /************************************************************
-   * 6. CHUYỂN SANG CÂU TIẾP THEO / KẾT THÚC GAME
+   * 8. NÚT NEXT
    ************************************************************/
   nextBtn.addEventListener("click", () => {
     currentQuestionIndex++;
-    clearInterval(timerInterval);
     if (currentQuestionIndex < questions.length) {
       loadQuestion();
     } else {
@@ -389,13 +419,16 @@
     }
   });
 
+  /************************************************************
+   * 9. KẾT THÚC
+   ************************************************************/
   function endGame() {
     showScreen("end");
-    resultText.textContent = `Bạn trả lời đúng ${score}/${questions.length} câu.`;
+    resultText.textContent = `Bạn đã chọn đúng ${score}/${questions.length} câu.`;
   }
 
   /************************************************************
-   * 7. XÁO TRỘN MẢNG
+   * 10. XÁO TRỘN MẢNG
    ************************************************************/
   function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -405,7 +438,7 @@
   }
 
   /************************************************************
-   * 8. SỰ KIỆN CHO NÚT
+   * 11. NÚT SỰ KIỆN
    ************************************************************/
   startBtn.addEventListener("click", startGame);
   replayBtn.addEventListener("click", () => {
