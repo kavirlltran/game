@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Trò chơi Chọn Ảnh – Hiệu ứng Che/Bỏ Che</title>
+  <title>Trò chơi Chọn Ảnh – Kích Thước Lớn & Hiệu Ứng Che/Bỏ Che</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     /* 1) ĐẶT ẢNH NỀN CHO TOÀN TRANG */
@@ -18,10 +18,10 @@
       color: #333;
       text-align: center;
       padding: 10px;
-      font-size: 1.3rem; /* Phóng to chữ toàn trang */
+      font-size: 1.3rem; /* Toàn bộ chữ phóng to */
     }
 
-    /* 2) CÁC MÀN HÌNH (BẮT ĐẦU, GAME, KẾT THÚC) */
+    /* 2) MÀN HÌNH CHÍNH */
     .screen {
       display: none;
       min-height: 100vh;
@@ -82,21 +82,22 @@
     #imageWrapper {
       display: flex;
       justify-content: center;
-      gap: 40px; /* khoảng cách giữa ảnh */
-      flex-wrap: wrap; /* cho mobile */
+      gap: 40px;
+      flex-wrap: wrap;
       margin-top: 20px;
     }
+    /* Tăng gấp 3 kích thước so với bản gốc: 350×220 -> 1050×660 */
     .image-container {
       position: relative;
-      width: 350px;  /* Rộng hơn */
-      height: 220px; /* Cao hơn */
+      width: 1050px;
+      height: 660px;
       border: 3px solid #ddd;
       border-radius: 10px;
       overflow: hidden;
       background: #eee;
       cursor: pointer;
     }
-    /* ẢNH BÊN TRONG */
+    /* Ảnh bên trong */
     .image-container img {
       width: 100%;
       height: 100%;
@@ -104,37 +105,38 @@
       display: block;
     }
 
-    /* 7) SỐ THỨ TỰ (1,2,3) PHÍA TRÊN ẢNH, LỚN VÀ IN ĐẬM */
+    /* 7) SỐ THỨ TỰ – luôn hiển thị, in đậm, có khung riêng */
     .number-label {
       position: absolute;
-      top: -35px; /* phía trên container */
-      left: 50%;
-      transform: translateX(-50%);
+      top: 10px;
+      left: 10px;
       background: #ff9800;
       color: #fff;
       padding: 6px 14px;
       border-radius: 8px;
       font-weight: bold;
-      font-size: 1.5rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      font-size: 3rem; /* tăng kích thước */
+      z-index: 100;  /* luôn hiển thị trên mọi lớp */
     }
 
-    /* 8) ẢNH CHE = natra.jpg, CÓ HIỆU ỨNG TRƯỢT */
+    /* 8) LỚP CHE – sử dụng hình natra.jpg, hiệu ứng trượt xuống mượt */
     .cover {
       position: absolute;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
       background: url('natra.jpg') center center / cover no-repeat;
-      transform: scaleY(0);          /* Ban đầu không che */
+      transform: scaleY(0);
       transform-origin: top;
-      transition: transform 0.5s ease; /* Hiệu ứng trượt */
+      transition: transform 0.5s ease;
+      z-index: 5;
     }
     .cover.show {
-      transform: scaleY(1); /* Khi thêm lớp .show sẽ che ảnh */
+      transform: scaleY(1);
     }
 
-    /* 9) DẤU TÍCH (✓) / DẤU X (✗) */
+    /* 9) DẤU TÍCH (✓) / DẤU X (✗) – hiển thị bên trong ảnh khi chọn, nhưng số thứ tự luôn ưu tiên */
     .checkmark, .wrongmark {
       position: absolute;
       top: 50%;
@@ -143,7 +145,7 @@
       font-size: 4rem;
       font-weight: bold;
       display: none;
-      z-index: 2;
+      z-index: 50;
     }
     .checkmark {
       color: green;
@@ -152,7 +154,7 @@
       color: red;
     }
 
-    /* 10) NÚT NEXT LUÔN HIỂN THỊ  */
+    /* 10) NÚT "Câu tiếp theo" luôn hiển thị */
     #nextBtn {
       margin-top: 20px;
     }
@@ -166,7 +168,7 @@
     /* 12) RESPONSIVE CHO MÀN HÌNH NHỎ */
     @media (max-width: 768px) {
       .image-container {
-        width: 80vw;
+        width: 90vw;
         height: auto;
         margin-bottom: 20px;
       }
@@ -184,7 +186,7 @@
     <h1>Trò chơi: Chọn Ảnh Đúng</h1>
     <p>
       Mỗi câu có 3 ảnh (1 đúng, 2 nhiễu).<br>
-      Bạn sẽ được xem ảnh trong 5 giây, sau đó ảnh bị che bằng <em>natra.jpg</em>.<br>
+      Bạn sẽ được xem ảnh trong 5 giây, sau đó ảnh bị che bằng <em>natra.jpg</em> với hiệu ứng trượt mượt.<br>
       Hãy nhớ vị trí ảnh đúng, rồi click để bỏ lớp che và chọn đáp án!
     </p>
     <button class="btn" id="startBtn">Bắt đầu</button>
@@ -197,10 +199,10 @@
     <h2 id="questionTitle">Câu 1</h2>
     <div id="timerDisplay"></div>
 
-    <!-- KHỐI 3 ẢNH -->
+    <!-- KHỐI CHỨA 3 ẢNH -->
     <div id="imageWrapper"></div>
 
-    <!-- NÚT NEXT LUÔN HIỂN THỊ -->
+    <!-- NÚT "Câu tiếp theo" luôn hiển thị -->
     <button class="btn" id="nextBtn">Câu tiếp theo</button>
   </div>
 </div>
@@ -252,7 +254,7 @@
   let remainingTime = viewTime;
   let timerInterval = null;
 
-  // DOM
+  // DOM Elements
   const startScreen = document.getElementById("startScreen");
   const gameScreen = document.getElementById("gameScreen");
   const endScreen = document.getElementById("endScreen");
@@ -303,15 +305,15 @@
     remainingTime = viewTime;
     updateTimerDisplay();
 
-    // Lấy dữ liệu
+    // Lấy dữ liệu câu hỏi hiện tại
     const q = questions[currentQuestionIndex];
     questionTitle.textContent = `Câu ${currentQuestionIndex + 1}: ${q.word}`;
 
-    // Tạo mảng 3 ảnh
+    // Tạo mảng 3 ảnh (1 đúng + 2 sai) và xáo trộn vị trí
     const allImages = [q.correct, ...q.distractors];
     shuffleArray(allImages);
 
-    // Tạo DOM 3 ảnh
+    // Tạo DOM cho 3 ảnh
     allImages.forEach((imgSrc, index) => {
       const container = document.createElement("div");
       container.className = "image-container";
@@ -321,16 +323,16 @@
       img.src = imgSrc;
       img.alt = "option";
 
-      // Số thứ tự
+      // Số thứ tự – luôn hiển thị
       const label = document.createElement("div");
       label.className = "number-label";
       label.textContent = (index + 1).toString();
 
-      // Cover = natra.jpg (hiệu ứng scaleY)
+      // Cover dùng natra.jpg, hiệu ứng trượt xuống
       const cover = document.createElement("div");
       cover.className = "cover";
 
-      // Dấu ✓ / ✗
+      // Dấu tích (✓) và dấu X (✗)
       const checkmark = document.createElement("div");
       checkmark.className = "checkmark";
       checkmark.textContent = "✓";
@@ -338,16 +340,13 @@
       wrongmark.className = "wrongmark";
       wrongmark.textContent = "✗";
 
-      // Sự kiện click
+      // Sự kiện click: chỉ cho phép khi cover đang hiển thị
       container.addEventListener("click", () => {
-        // Chỉ cho click khi cover đang hiển thị
         if (!cover.classList.contains("show")) return;
-
-        // Nếu đã chọn 1 ảnh khác, bỏ qua
+        // Nếu đã có ảnh được chọn, bỏ qua
         if (document.querySelector(".image-container.selected")) return;
-
         container.classList.add("selected");
-        // Bỏ lớp che để hiển thị lại ảnh
+        // Loại bỏ lớp che để hiển thị ảnh
         cover.classList.remove("show");
 
         // Kiểm tra đúng/sai
@@ -357,12 +356,11 @@
         } else {
           wrongmark.style.display = "block";
         }
-
-        // Vô hiệu hóa click tiếp
+        // Vô hiệu hóa click cho các ảnh khác
         disableAllClicks();
       });
 
-      // Thêm vào container
+      // Thêm các thành phần vào container
       container.appendChild(img);
       container.appendChild(label);
       container.appendChild(cover);
@@ -371,20 +369,19 @@
       imageWrapper.appendChild(container);
     });
 
-    // Chạy timer 5s để xem ảnh, sau đó che
+    // Bắt đầu bộ đếm 5s để xem ảnh, sau đó thêm lớp che cho tất cả ảnh
     timerInterval = setInterval(() => {
       remainingTime--;
       updateTimerDisplay();
       if (remainingTime <= 0) {
         clearInterval(timerInterval);
-        // Hết 5s -> thêm .show cho tất cả cover
         showAllCovers();
       }
     }, 1000);
   }
 
   /************************************************************
-   * 5) HIỂN THỊ COVER (natra.jpg) CHO MỌI ẢNH
+   * 5) HIỂN THỊ LỚP CHE (natra.jpg) CHO TẤT CẢ ẢNH
    ************************************************************/
   function showAllCovers() {
     const covers = document.querySelectorAll(".cover");
@@ -394,7 +391,7 @@
   }
 
   /************************************************************
-   * 6) CẬP NHẬT TIMER
+   * 6) CẬP NHẬT HIỂN THỊ TIMER
    ************************************************************/
   function updateTimerDisplay() {
     timerDisplay.textContent = `Thời gian xem ảnh: ${remainingTime}s`;
@@ -411,7 +408,7 @@
   }
 
   /************************************************************
-   * 8) NÚT NEXT
+   * 8) NÚT "Câu tiếp theo"
    ************************************************************/
   nextBtn.addEventListener("click", () => {
     currentQuestionIndex++;
@@ -441,7 +438,7 @@
   }
 
   /************************************************************
-   * 11) NÚT BẮT ĐẦU / CHƠI LẠI
+   * 11) SỰ KIỆN CHO NÚT BẮT ĐẦU / CHƠI LẠI
    ************************************************************/
   startBtn.addEventListener("click", startGame);
   replayBtn.addEventListener("click", () => {
