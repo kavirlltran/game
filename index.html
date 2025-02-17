@@ -13,7 +13,6 @@
     }
     body {
       font-family: Arial, sans-serif;
-      /* Sử dụng "nen xanh.jpg" làm ảnh nền */
       background: url('nen xanh.jpg') no-repeat center center fixed;
       background-size: cover;
       color: #333;
@@ -134,7 +133,7 @@
       animation: bounce 1s;
     }
     
-    /* Container ảnh: tăng 50% so với gốc (700×440px → 1050×660px), sau đó tăng thêm 30% nữa (tổng khoảng 1365×858px) */
+    /* Container ảnh: tăng 50% so với gốc (700×440px → 1050×660px), sau đó tăng thêm 30% nữa */
     .image-container {
       position: relative;
       width: 100%;
@@ -521,7 +520,6 @@
     }
     
     nextBtn.addEventListener("click", () => {
-      if (!answerSelected) return;
       currentQuestionIndex++;
       if (currentQuestionIndex < questions.length) {
         loadQuestion();
