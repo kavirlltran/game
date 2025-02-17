@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Trò chơi Chọn Ảnh – Gợi ý & Highlight</title>
+  <title>Trò chơi Chọn Ảnh – Cập nhật</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     /* BASE RESET & NỀN */
@@ -13,7 +13,6 @@
     }
     body {
       font-family: Arial, sans-serif;
-      /* Sử dụng "anh nen.jpg" làm nền */
       background: url('anh nen.jpg') no-repeat center center fixed;
       background-size: cover;
       color: #333;
@@ -37,14 +36,14 @@
       display: none;
     }
     
-    /* HIGHLIGHT cho phần chữ – giảm độ trong suốt để chữ dễ đọc và đổi màu chữ */
-    .highlight {
-      border: 2px solid #ff9800;
-      background-color: rgba(255,255,0,0.5);
-      padding: 10px;
+    /* KHUNG CHỮ – khung trắng đơn giản */
+    .text-container {
+      background: #fff;
+      border: 2px solid #ccc;
+      padding: 15px;
       border-radius: 8px;
-      display: inline-block;
-      margin-bottom: 20px;
+      max-width: 800px;
+      margin: 0 auto 20px;
       color: #0a74da; /* Màu chữ xanh đậm */
     }
     
@@ -101,17 +100,7 @@
       animation: fadeIn 1s ease-out;
     }
     
-    /* Gợi ý: chỉ xuất hiện sau 6s */
-    #hintDisplay {
-      font-size: 1.3rem;
-      font-weight: bold;
-      color: #0a74da;
-      margin-bottom: 15px;
-      display: none;
-      animation: fadeIn 1s ease-out;
-    }
-    
-    /* VÙNG CHỨA ẢNH: dùng CSS Grid để hiển thị 3 ảnh trên 1 hàng */
+    /* VÙNG CHỨA ẢNH: sử dụng CSS Grid để hiển thị 3 ảnh trên 1 hàng */
     #imageWrapper {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -122,13 +111,13 @@
       margin: 20px auto;
     }
     
-    /* Mỗi mục gồm số thứ tự và container ảnh. Tăng khung bao (white frame) lên 30%: */
+    /* Mỗi mục gồm số thứ tự và container ảnh */
     .image-item {
       display: flex;
       flex-direction: column;
       align-items: center;
       background: rgba(255,255,255,0.9);
-      padding: 0 30px; /* Tăng từ 20px lên 30px */
+      padding: 0 30px; /* tăng padding lên 30px */
       border-radius: 10px;
     }
     
@@ -144,12 +133,12 @@
       animation: bounce 1s;
     }
     
-    /* Container ảnh: tăng kích thước lên 50% so với 700×440px → 1050×660px */
+    /* Container ảnh tăng 50% so với gốc 700×440px → 1050×660px, sau đó tăng thêm 30%: tổng khoảng 1365×858px */
     .image-container {
       position: relative;
       width: 100%;
-      max-width: 1050px;
-      aspect-ratio: 1050 / 660;
+      max-width: 1365px;
+      aspect-ratio: 1365 / 858;
       border: 3px solid #ddd;
       border-radius: 10px;
       overflow: hidden;
@@ -171,7 +160,7 @@
       transform-origin: center center;
     }
     
-    /* Lớp che: sử dụng ảnh "che.png" */
+    /* Lớp che sử dụng ảnh "che.png" */
     .cover {
       position: absolute;
       top: 0;
@@ -211,7 +200,8 @@
     
     /* KEYFRAMES */
     @keyframes fadeIn {
-      from { opacity: 0; } to { opacity: 1; }
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
     @keyframes bounce {
       0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
@@ -243,7 +233,7 @@
   
   <!-- Màn hình Bắt đầu -->
   <div id="startScreen" class="screen active">
-    <div class="highlight">
+    <div class="text-container" style="background:#fff; border:2px solid #ccc; padding:15px; border-radius:8px; max-width:800px; margin:0 auto 20px; color:#0a74da;">
       <h1>Trò chơi: Chọn Ảnh Đúng</h1>
       <p>
         Mỗi câu có 3 ảnh (1 đúng, 2 nhiễu).<br>
@@ -257,18 +247,18 @@
   
   <!-- Màn hình Game -->
   <div id="gameScreen" class="screen">
-    <div class="highlight">
-      <h2 id="questionTitle">Câu 1: face-to-face</h2>
+    <div class="text-container" style="background:#fff; border:2px solid #ccc; padding:15px; border-radius:8px; max-width:800px; margin:0 auto 20px; color:#0a74da;">
+      <!-- Ban đầu chỉ hiển thị "Câu 1" -->
+      <h2 id="questionTitle">Câu 1</h2>
     </div>
     <div id="timerDisplay"></div>
-    <div id="hintDisplay"></div>
     <div id="imageWrapper"></div>
     <button class="btn" id="nextBtn" disabled>Câu tiếp theo</button>
   </div>
   
   <!-- Màn hình Kết thúc -->
   <div id="endScreen" class="screen">
-    <div class="highlight">
+    <div class="text-container" style="background:#fff; border:2px solid #ccc; padding:15px; border-radius:8px; max-width:800px; margin:0 auto 20px; color:#0a74da;">
       <h1>Kết thúc trò chơi</h1>
       <h2 id="resultText"></h2>
     </div>
@@ -280,37 +270,32 @@
     const audioCorrect = new Audio('true.mp3');
     const audioWrong = new Audio('failed.mp3');
     
-    // Các câu hỏi với gợi ý
+    // Các câu hỏi (không có hint nữa)
     const questions = [
       {
         word: "face-to-face",
         correct: "face to face learning.jpg",
-        distractors: ["prepare for.webp", "strategy.webp"],
-        hint: "Gợi ý: Gặp mặt trực tiếp"
+        distractors: ["prepare for.webp", "strategy.webp"]
       },
       {
         word: "prepare",
         correct: "prepare for.webp",
-        distractors: ["strategy.webp", "online learning.webp"],
-        hint: "Gợi ý: Chuẩn bị kỹ càng"
+        distractors: ["strategy.webp", "online learning.webp"]
       },
       {
         word: "strategy",
         correct: "strategy.webp",
-        distractors: ["online learning.webp", "blended learning.webp"],
-        hint: "Gợi ý: Có kế hoạch rõ ràng"
+        distractors: ["online learning.webp", "blended learning.webp"]
       },
       {
         word: "online learning",
         correct: "online learning.webp",
-        distractors: ["face to face learning.jpg", "blended learning.webp"],
-        hint: "Gợi ý: Học qua mạng"
+        distractors: ["face to face learning.jpg", "blended learning.webp"]
       },
       {
         word: "blended learning",
         correct: "blended learning.webp",
-        distractors: ["face to face learning.jpg", "strategy.webp"],
-        hint: "Gợi ý: Học kết hợp trực tuyến và trực tiếp"
+        distractors: ["face to face learning.jpg", "strategy.webp"]
       }
     ];
     
@@ -329,7 +314,6 @@
     
     const questionTitle = document.getElementById("questionTitle");
     const timerDisplay = document.getElementById("timerDisplay");
-    const hintDisplay = document.getElementById("hintDisplay");
     const imageWrapper = document.getElementById("imageWrapper");
     const nextBtn = document.getElementById("nextBtn");
     const resultText = document.getElementById("resultText");
@@ -361,11 +345,11 @@
       canSelect = false;
       nextBtn.disabled = true;
       updateTimerDisplay();
-      hintDisplay.style.display = "none";
-      hintDisplay.textContent = "";
+      
+      // Ban đầu, chỉ hiển thị "Câu X"
+      questionTitle.textContent = `Câu ${currentQuestionIndex + 1}`;
       
       const q = questions[currentQuestionIndex];
-      questionTitle.textContent = `Câu ${currentQuestionIndex + 1}: ${q.word}`;
       const allImages = [q.correct, ...q.distractors];
       shuffleArray(allImages);
       
@@ -431,8 +415,9 @@
           clearInterval(timerInterval);
           showAllCovers();
           canSelect = true;
-          hintDisplay.textContent = q.hint;
-          hintDisplay.style.display = "block";
+          // Sau khi hết 6s, cập nhật tiêu đề câu hỏi thành "Câu X: [word]"
+          const q = questions[currentQuestionIndex];
+          questionTitle.textContent = `Câu ${currentQuestionIndex + 1}: ${q.word}`;
         }
       }, 1000);
     }
