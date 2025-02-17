@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Secret window</title>
+  <title>SECRET WINDOW</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     /* BASE RESET & NỀN */
@@ -92,7 +92,7 @@
       cursor: not-allowed;
     }
     
-    /* TIMER: đổi thành "Time:" */
+    /* TIMER hiển thị theo định dạng 00:06s */
     #timerDisplay {
       font-size: 1.3rem;
       font-weight: bold;
@@ -495,7 +495,7 @@
           clearInterval(timerInterval);
           showAllCovers();
           canSelect = true;
-          // Sau 6s, cập nhật tiêu đề câu hỏi thành "Question X: [word]"
+          // Sau khi hết thời gian, cập nhật tiêu đề câu hỏi thành "Question X: [word]"
           const q = questions[currentQuestionIndex];
           questionTitle.textContent = `Question ${currentQuestionIndex + 1}: ${q.word}`;
         }
@@ -509,8 +509,13 @@
       });
     }
     
+    // Hàm định dạng thời gian theo dạng 00:06s
     function updateTimerDisplay() {
-      timerDisplay.textContent = `Time: ${remainingTime}s`;
+      let minutes = Math.floor(remainingTime / 60);
+      let seconds = remainingTime % 60;
+      let minuteStr = minutes < 10 ? "0" + minutes : minutes;
+      let secondStr = seconds < 10 ? "0" + seconds : seconds;
+      timerDisplay.textContent = `${minuteStr}:${secondStr}s`;
     }
     
     function disableAllClicks() {
