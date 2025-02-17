@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Trò chơi Chọn Ảnh – Hiệu Ứng Sinh Động & Số Thứ Tự Riêng</title>
+  <title>Trò chơi Chọn Ảnh – Hiệu Ứng Sinh Động & Khung Lớn Hơn</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     /* BASE RESET & NỀN */
@@ -103,13 +103,13 @@
       padding: 10px;
       animation: fadeIn 1s ease-out;
     }
-    /* Mỗi mục bao gồm số thứ tự + container ảnh */
+    /* Mỗi mục gồm số thứ tự riêng + container ảnh */
     .image-item {
       display: flex;
       flex-direction: column;
       align-items: center;
     }
-    /* Số thứ tự: hiển thị riêng, luôn trên đầu, in đậm, có khung nền */
+    /* Số thứ tự: hiển thị riêng, luôn ở trên đầu */
     .number-label {
       background: #ff9800;
       color: #fff;
@@ -120,11 +120,11 @@
       margin-bottom: 10px;
       animation: bounce 1s;
     }
-    /* Container ảnh: giảm kích thước còn 525x330px */
+    /* Container ảnh được tăng kích thước lên: 700x440px */
     .image-container {
       position: relative;
-      width: 525px;
-      height: 330px;
+      width: 700px;
+      height: 440px;
       border: 3px solid #ddd;
       border-radius: 10px;
       overflow: hidden;
@@ -205,7 +205,7 @@
       50% { transform: scale(1.05); }
       100% { transform: scale(1); }
     }
-    /* Responsive: trên điện thoại, hiển thị các mục theo hàng dọc */
+    /* Responsive: trên điện thoại hiển thị các mục theo hàng dọc */
     @media (max-width: 768px) {
       #imageWrapper {
         flex-direction: column;
@@ -293,7 +293,7 @@
     const viewTime = 5; // 5 giây xem ảnh
     let remainingTime = viewTime;
     let timerInterval = null;
-    let answerSelected = false; // Cờ đánh dấu đã chọn đáp án
+    let answerSelected = false;
 
     // DOM Elements
     const startScreen = document.getElementById("startScreen");
@@ -340,11 +340,11 @@
       shuffleArray(allImages);
 
       allImages.forEach((imgSrc, index) => {
-        // Tạo phần tử bao bọc cho mỗi mục (bao gồm số thứ tự và container ảnh)
+        // Tạo phần tử bao bọc cho mỗi mục: gồm số thứ tự và container ảnh
         const item = document.createElement("div");
         item.className = "image-item";
 
-        // Tạo phần tử số thứ tự
+        // Phần tử số thứ tự
         const label = document.createElement("div");
         label.className = "number-label";
         label.textContent = (index + 1).toString();
@@ -387,7 +387,6 @@
           nextBtn.disabled = false;
         });
 
-        // Xây dựng cấu trúc DOM: item chứa label và container
         container.appendChild(img);
         container.appendChild(cover);
         container.appendChild(checkmark);
