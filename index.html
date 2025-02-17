@@ -459,8 +459,8 @@
         wrongmark.className = "wrongmark";
         wrongmark.textContent = "✗";
     
+        // Cho phép click đáp án ngay cả khi chưa hết thời gian
         container.addEventListener("click", () => {
-          if (!canSelect) return;
           cover.classList.remove("show");
           if (imgSrc === q.correct) {
             answerSelected = true;
