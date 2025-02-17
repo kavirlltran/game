@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Trò chơi Chọn Ảnh – Hiệu Ứng Sinh Động & Khung Lớn Hơn</title>
+  <title>Trò chơi Chọn Ảnh – Khung White Rộng Hơn</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     /* BASE RESET & NỀN */
@@ -30,7 +30,7 @@
       background: rgba(0, 0, 0, 0.15);
       z-index: -1;
     }
-
+    
     /* HIỆU ỨNG CHO TOÀN BỘ MÀN HÌNH */
     .screen {
       display: none;
@@ -103,13 +103,17 @@
       padding: 10px;
       animation: fadeIn 1s ease-out;
     }
-    /* Mỗi mục gồm số thứ tự riêng + container ảnh */
+    /* Mỗi mục bao gồm số thứ tự và container ảnh */
     .image-item {
       display: flex;
       flex-direction: column;
       align-items: center;
+      /* Thêm khung nền trắng (với tone nhẹ phù hợp với nền) và padding ngang tăng lên */
+      background: rgba(255,255,255,0.9);
+      padding: 0 50px;
+      border-radius: 10px;
     }
-    /* Số thứ tự: hiển thị riêng, luôn ở trên đầu */
+    /* Số thứ tự – hiển thị riêng, luôn ở trên đầu */
     .number-label {
       background: #ff9800;
       color: #fff;
@@ -120,7 +124,7 @@
       margin-bottom: 10px;
       animation: bounce 1s;
     }
-    /* Container ảnh được tăng kích thước lên: 700x440px */
+    /* Container ảnh giữ nguyên kích thước: 700×440px */
     .image-container {
       position: relative;
       width: 700px;
