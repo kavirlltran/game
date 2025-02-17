@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Trò chơi Chọn Ảnh – Mở ảnh & Chọn lại khi sai</title>
+  <title>Trò chơi Chọn Ảnh – Bố trí 3 ảnh hiển thị đầy đủ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     /* BASE RESET & NỀN */
@@ -12,7 +12,7 @@
       padding: 0;
     }
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
       background: url('hinh-nen-ai-64.jpg') no-repeat center center fixed;
       background-size: cover;
       color: #333;
@@ -99,12 +99,11 @@
       margin-bottom: 15px;
       animation: fadeIn 1s ease-out;
     }
-    /* VÙNG CHỨA CÁC MỤC ẢNH */
+    /* VÙNG CHỨA ẢNH: Sử dụng CSS Grid để hiển thị 3 ảnh trên 1 hàng */
     #imageWrapper {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      overflow-x: auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
       padding: 10px;
       animation: fadeIn 1s ease-out;
     }
@@ -114,10 +113,10 @@
       flex-direction: column;
       align-items: center;
       background: rgba(255,255,255,0.9);
-      padding: 0 50px;
+      padding: 0 20px;
       border-radius: 10px;
     }
-    /* Số thứ tự – tách riêng */
+    /* Số thứ tự: tách riêng ra khỏi ảnh */
     .number-label {
       background: #ff9800;
       color: #fff;
@@ -128,11 +127,11 @@
       margin-bottom: 10px;
       animation: bounce 1s;
     }
-    /* Container ảnh: giữ kích thước ban đầu là 700×440px */
+    /* Container ảnh: thay vì kích thước cố định, dùng 100% của ô */
     .image-container {
       position: relative;
-      width: 700px;
-      height: 440px;
+      width: 100%;
+      aspect-ratio: 700 / 440; /* Giữ tỷ lệ ban đầu */
       border: 3px solid #ddd;
       border-radius: 10px;
       overflow: hidden;
@@ -144,10 +143,9 @@
       transform: scale(1.02);
       box-shadow: 0 6px 12px rgba(0,0,0,0.3);
     }
-    /* CHỈNH KÍCH THƯỚC ẢNH: giảm 15% để vừa với ô bao quanh */
     .image-container img {
-      max-width: 90%;
-      max-height: 90%;
+      width: 90%;
+      height: 90%;
       object-fit: contain;
       display: block;
       margin: auto;
@@ -218,14 +216,15 @@
     /* Responsive: trên điện thoại, hiển thị theo hàng dọc */
     @media (max-width: 768px) {
       #imageWrapper {
-        flex-direction: column;
+        grid-template-columns: 1fr;
         gap: 20px;
       }
       .image-container {
         width: 90vw;
-        height: auto;
+        aspect-ratio: auto;
       }
       .image-container img {
+        width: 90%;
         height: auto;
       }
     }
@@ -348,7 +347,7 @@
 
       const q = questions[currentQuestionIndex];
       questionTitle.textContent = `Câu ${currentQuestionIndex + 1}: ${q.word}`;
-      // Tạo mảng 3 ảnh (1 đáp án đúng + 2 nhiễu) và xáo trộn vị trí
+      // Tạo mảng 3 ảnh (1 đúng + 2 nhiễu) và xáo trộn vị trí
       const allImages = [q.correct, ...q.distractors];
       shuffleArray(allImages);
 
@@ -383,7 +382,7 @@
         wrongmark.textContent = "✗";
 
         container.addEventListener("click", () => {
-          // Nếu cover hiện thì luôn loại bỏ để mở ảnh ra
+          // Luôn mở ảnh: loại bỏ lớp che
           cover.classList.remove("show");
           if (imgSrc === q.correct) {
             answerSelected = true;
@@ -395,12 +394,12 @@
           } else {
             wrongmark.style.display = "block";
             audioWrong.play();
-            // Sau 1 giây, nếu chọn sai thì tự động đóng lại ảnh (thêm lại lớp che)
+            // Sau 1 giây, nếu sai thì tự động che lại ảnh để thử lại
             setTimeout(() => {
               wrongmark.style.display = "none";
               cover.classList.add("show");
             }, 1000);
-            // Cho phép chọn lại (không đặt answerSelected = true)
+            // Không đặt answerSelected = true để cho phép chọn lại
           }
         });
 
