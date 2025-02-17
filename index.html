@@ -13,6 +13,7 @@
     }
     body {
       font-family: Arial, sans-serif;
+      /* Sử dụng "nen xanh.jpg" làm ảnh nền */
       background: url('nen xanh.jpg') no-repeat center center fixed;
       background-size: cover;
       color: #333;
@@ -91,7 +92,7 @@
       cursor: not-allowed;
     }
     
-    /* TIMER */
+    /* TIMER: đổi "Thời gian xem ảnh:" thành "Time:" */
     #timerDisplay {
       font-size: 1.3rem;
       font-weight: bold;
@@ -100,7 +101,7 @@
       animation: fadeIn 1s ease-out;
     }
     
-    /* VÙNG CHỨA ẢNH: CSS Grid 3 ảnh trên 1 hàng */
+    /* VÙNG CHỨA ẢNH: dùng CSS Grid để hiển thị 3 ảnh trên 1 hàng */
     #imageWrapper {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -133,7 +134,7 @@
       animation: bounce 1s;
     }
     
-    /* Container ảnh: tăng kích thước lên 50% so với 700×440px → 1050×660px, sau đó tăng thêm 30% nữa */
+    /* Container ảnh: tăng 50% so với gốc (700×440px → 1050×660px), sau đó tăng thêm 30% nữa → khoảng 1365×858px */
     .image-container {
       position: relative;
       width: 100%;
@@ -198,17 +199,17 @@
       animation: fadeIn 1s ease-out;
     }
     
-    /* Nút TUTORIAL */
+    /* Nút TUTORIAL: chuyển xuống gần góc trái bên dưới, phóng to */
     #tutorialBtn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      padding: 8px 16px;
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      padding: 16px 28px;
       background: #28a745;
       color: #fff;
       border: none;
       border-radius: 4px;
-      font-size: 1rem;
+      font-size: 1.5rem;
       cursor: pointer;
       z-index: 100;
       transition: transform 0.2s, box-shadow 0.2s;
@@ -314,7 +315,7 @@
       <p>
         B1: Nhấn <strong style="border: 2px solid #0077cc; padding: 5px 10px; border-radius: 4px;">Start</strong> để vào game;<br>
         B2: Học sinh sẽ quan sát hình ảnh được mở ra từ ô cửa trong khoảng thời gian đã chọn,
-        sau đó ô cửa đóng lại và hiện flashcard từ vựng/âm thanh của từ vựng.
+        sau đó ô cửa đóng lại và hiển thị flashcard từ vựng/âm thanh của từ vựng.
         Nhiệm vụ của học sinh là ghi nhớ đúng từ đó nằm trong ô cửa nào và đập tay vào đúng ô cửa đó.
       </p>
     </div>
@@ -494,7 +495,7 @@
           clearInterval(timerInterval);
           showAllCovers();
           canSelect = true;
-          // Sau 6s, cập nhật tiêu đề thành "Question X: [word]"
+          // Sau 6s, cập nhật tiêu đề câu hỏi thành "Question X: [word]"
           const q = questions[currentQuestionIndex];
           questionTitle.textContent = `Question ${currentQuestionIndex + 1}: ${q.word}`;
         }
@@ -509,7 +510,7 @@
     }
     
     function updateTimerDisplay() {
-      timerDisplay.textContent = `Thời gian xem ảnh: ${remainingTime}s`;
+      timerDisplay.textContent = `Time: ${remainingTime}s`;
     }
     
     function disableAllClicks() {
@@ -531,7 +532,7 @@
     
     function endGame() {
       showScreen("end");
-      resultText.textContent = `Bạn đã chọn đúng ${score}/${questions.length} câu.`;
+      resultText.textContent = `You got ${score} out of ${questions.length} correct.`;
     }
     
     function shuffleArray(array) {
