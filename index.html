@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Trò chơi Chọn Ảnh – Nội dung tràn web</title>
+  <title>Trò chơi Chọn Ảnh – Highlight & Chọn sau 6s</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     /* BASE RESET & NỀN */
@@ -36,6 +36,16 @@
       display: none;
     }
     
+    /* CLASS HIGHLIGHT CHO PHẦN CHỮ */
+    .highlight {
+      border: 2px solid #ff9800;
+      background-color: rgba(255, 255, 0, 0.2);
+      padding: 10px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+    
     /* MÀN HÌNH */
     .screen {
       display: none;
@@ -46,11 +56,10 @@
     .active {
       display: block;
     }
-    
-    /* TIÊU ĐỀ & MÔ TẢ */
+    /* Tiêu đề và mô tả được highlight */
     h1, h2, p {
-      margin: 10px auto;
       max-width: 800px;
+      margin: 10px auto;
     }
     h1 {
       font-size: 2rem;
@@ -90,7 +99,7 @@
       animation: fadeIn 1s ease-out;
     }
     
-    /* VÙNG CHỨA ẢNH: dùng CSS Grid để hiển thị 3 ảnh trên 1 hàng (desktop) */
+    /* VÙNG CHỨA ẢNH: sử dụng CSS Grid để bố trí 3 ảnh trên 1 hàng */
     #imageWrapper {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -101,7 +110,7 @@
       margin: 20px auto;
     }
     
-    /* Mỗi mục ảnh gồm số thứ tự (tách riêng) và container ảnh */
+    /* Mỗi mục ảnh gồm số thứ tự và container ảnh */
     .image-item {
       display: flex;
       flex-direction: column;
@@ -110,7 +119,7 @@
       padding: 0 20px;
       border-radius: 10px;
     }
-    /* Số thứ tự */
+    /* Số thứ tự (được tách riêng) */
     .number-label {
       background: #ff9800;
       color: #fff;
@@ -121,12 +130,12 @@
       margin-bottom: 10px;
       animation: bounce 1s;
     }
-    /* Container ảnh: giữ tỷ lệ ban đầu 700:440 nhưng cho ảnh vừa với container */
+    /* Container ảnh: tăng 30% kích thước từ ban đầu 700×440px => 910×572px */
     .image-container {
       position: relative;
       width: 100%;
-      max-width: 700px;
-      aspect-ratio: 700 / 440;
+      max-width: 910px;
+      aspect-ratio: 700 / 440; /* Tỉ lệ ban đầu được giữ */
       border: 3px solid #ddd;
       border-radius: 10px;
       overflow: hidden;
@@ -203,7 +212,7 @@
       100% { transform: scale(1); }
     }
     
-    /* Responsive: trên điện thoại, hiển thị theo hàng dọc */
+    /* Responsive: trên điện thoại, bố trí theo hàng dọc */
     @media (max-width: 768px) {
       #imageWrapper {
         grid-template-columns: 1fr;
@@ -223,18 +232,23 @@
 
   <!-- Màn hình Bắt đầu -->
   <div id="startScreen" class="screen active">
-    <h1>Trò chơi: Chọn Ảnh Đúng</h1>
-    <p>
-      Mỗi câu có 3 ảnh (1 đúng, 2 nhiễu).<br>
-      Bạn sẽ được xem ảnh trong 5 giây, sau đó ảnh bị che bằng <em>natra.jpg</em> với hiệu ứng trượt mượt.<br>
-      Hãy nhớ vị trí ảnh đúng, rồi click để bỏ lớp che và chọn đáp án!
-    </p>
+    <div class="highlight">
+      <h1>Trò chơi: Chọn Ảnh Đúng</h1>
+      <p>
+        Mỗi câu có 3 ảnh (1 đúng, 2 nhiễu).<br>
+        Bạn sẽ được xem ảnh trong 6 giây (trong thời gian này, bạn không thể chọn đáp án),<br>
+        sau đó ảnh sẽ bị che bằng <em>natra.jpg</em> với hiệu ứng trượt mượt.<br>
+        Hãy nhớ vị trí ảnh đúng, rồi click để bỏ lớp che và chọn đáp án!
+      </p>
+    </div>
     <button class="btn" id="startBtn">Bắt đầu</button>
   </div>
 
   <!-- Màn hình Game -->
   <div id="gameScreen" class="screen">
-    <h2 id="questionTitle">Câu 1: face-to-face</h2>
+    <div class="highlight">
+      <h2 id="questionTitle">Câu 1: face-to-face</h2>
+    </div>
     <div id="timerDisplay"></div>
     <div id="imageWrapper"></div>
     <button class="btn" id="nextBtn" disabled>Câu tiếp theo</button>
@@ -242,8 +256,10 @@
 
   <!-- Màn hình Kết thúc -->
   <div id="endScreen" class="screen">
-    <h1>Kết thúc trò chơi</h1>
-    <h2 id="resultText"></h2>
+    <div class="highlight">
+      <h1>Kết thúc trò chơi</h1>
+      <h2 id="resultText"></h2>
+    </div>
     <button class="btn" id="replayBtn">Chơi lại</button>
   </div>
 
@@ -282,10 +298,11 @@
 
     let currentQuestionIndex = 0;
     let score = 0;
-    const viewTime = 5; // 5 giây xem ảnh
+    const viewTime = 6; // 6 giây xem ảnh
     let remainingTime = viewTime;
     let timerInterval = null;
     let answerSelected = false;
+    let canSelect = false; // Chưa cho phép chọn đáp án trong 6s đầu
 
     // DOM Elements
     const startScreen = document.getElementById("startScreen");
@@ -322,26 +339,24 @@
       imageWrapper.innerHTML = "";
       remainingTime = viewTime;
       answerSelected = false;
+      canSelect = false;
       nextBtn.disabled = true;
       updateTimerDisplay();
 
       const q = questions[currentQuestionIndex];
       questionTitle.textContent = `Câu ${currentQuestionIndex + 1}: ${q.word}`;
-      // Tạo mảng 3 ảnh và xáo trộn vị trí
+      // Xáo trộn 3 ảnh: 1 đúng + 2 nhiễu
       const allImages = [q.correct, ...q.distractors];
       shuffleArray(allImages);
 
       allImages.forEach((imgSrc, index) => {
-        // Tạo phần tử bao bọc cho mỗi mục gồm số thứ tự và container ảnh
         const item = document.createElement("div");
         item.className = "image-item";
 
-        // Phần tử số thứ tự
         const label = document.createElement("div");
         label.className = "number-label";
         label.textContent = (index + 1).toString();
 
-        // Tạo container ảnh
         const container = document.createElement("div");
         container.className = "image-container";
 
@@ -349,7 +364,6 @@
         img.src = imgSrc;
         img.alt = "option";
 
-        // Tạo lớp che, dấu tích và dấu X
         const cover = document.createElement("div");
         cover.className = "cover";
 
@@ -362,6 +376,8 @@
         wrongmark.textContent = "✗";
 
         container.addEventListener("click", () => {
+          // Chỉ cho phép click sau 6s (khi canSelect == true)
+          if (!canSelect) return;
           // Luôn mở ảnh: loại bỏ lớp che
           cover.classList.remove("show");
           if (imgSrc === q.correct) {
@@ -374,7 +390,6 @@
           } else {
             wrongmark.style.display = "block";
             audioWrong.play();
-            // Sau 1 giây, nếu chọn sai thì tự động đóng lại ảnh
             setTimeout(() => {
               wrongmark.style.display = "none";
               cover.classList.add("show");
@@ -397,6 +412,7 @@
         if (remainingTime <= 0) {
           clearInterval(timerInterval);
           showAllCovers();
+          canSelect = true;
         }
       }, 1000);
     }
@@ -445,8 +461,7 @@
     replayBtn.addEventListener("click", () => {
       showScreen("start");
     });
-    
-    // Cố gắng autoplay nhạc nền khi trang load
+
     window.addEventListener('load', () => {
       const bgMusic = document.getElementById('bgMusic');
       bgMusic.play().catch(err => {
