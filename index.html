@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Trò chơi Chọn Ảnh – Bố trí 3 ảnh hiển thị đầy đủ</title>
+  <title>Trò chơi Chọn Ảnh – Ảnh vừa với container & Nhạc nền tự động</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     /* BASE RESET & NỀN */
@@ -12,7 +12,7 @@
       padding: 0;
     }
     body {
-      font-family: 'Arial', sans-serif;
+      font-family: Arial, sans-serif;
       background: url('hinh-nen-ai-64.jpg') no-repeat center center fixed;
       background-size: cover;
       color: #333;
@@ -32,6 +32,8 @@
     }
     
     /* NHẠC NỀN */
+    /* Dù thuộc tính autoplay được đặt, trình duyệt hiện đại có thể chặn nếu không có tương tác.
+       Chúng ta sẽ cố gắng gọi play() khi trang load */
     audio#bgMusic {
       display: none;
     }
@@ -99,7 +101,7 @@
       margin-bottom: 15px;
       animation: fadeIn 1s ease-out;
     }
-    /* VÙNG CHỨA ẢNH: Sử dụng CSS Grid để hiển thị 3 ảnh trên 1 hàng */
+    /* VÙNG CHỨA ẢNH: sử dụng CSS Grid để hiển thị 3 ảnh trên 1 hàng */
     #imageWrapper {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -127,11 +129,11 @@
       margin-bottom: 10px;
       animation: bounce 1s;
     }
-    /* Container ảnh: thay vì kích thước cố định, dùng 100% của ô */
+    /* Container ảnh: giữ kích thước ban đầu 700×440px, nhưng ảnh bên trong sẽ vừa với container */
     .image-container {
       position: relative;
-      width: 100%;
-      aspect-ratio: 700 / 440; /* Giữ tỷ lệ ban đầu */
+      width: 700px;
+      aspect-ratio: 700 / 440;
       border: 3px solid #ddd;
       border-radius: 10px;
       overflow: hidden;
@@ -144,11 +146,10 @@
       box-shadow: 0 6px 12px rgba(0,0,0,0.3);
     }
     .image-container img {
-      width: 90%;
-      height: 90%;
-      object-fit: contain;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
       display: block;
-      margin: auto;
     }
     /* Lớp che: sử dụng ảnh natra.jpg, hiệu ứng trượt mượt */
     .cover {
@@ -223,16 +224,12 @@
         width: 90vw;
         aspect-ratio: auto;
       }
-      .image-container img {
-        width: 90%;
-        height: auto;
-      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Nhạc nền -->
+  <!-- Nhạc nền tự động chạy -->
   <audio id="bgMusic" src="nhac nen.mp3" loop autoplay></audio>
 
   <!-- Màn hình Bắt đầu -->
@@ -394,12 +391,11 @@
           } else {
             wrongmark.style.display = "block";
             audioWrong.play();
-            // Sau 1 giây, nếu sai thì tự động che lại ảnh để thử lại
+            // Sau 1 giây, nếu sai thì tự động đóng lại ảnh (thêm lại lớp che)
             setTimeout(() => {
               wrongmark.style.display = "none";
               cover.classList.add("show");
             }, 1000);
-            // Không đặt answerSelected = true để cho phép chọn lại
           }
         });
 
@@ -465,6 +461,14 @@
     startBtn.addEventListener("click", startGame);
     replayBtn.addEventListener("click", () => {
       showScreen("start");
+    });
+
+    // Cố gắng auto-play nhạc nền sau khi trang load
+    window.addEventListener('load', () => {
+      const bgMusic = document.getElementById('bgMusic');
+      bgMusic.play().catch(err => {
+        console.log("Autoplay không được kích hoạt: ", err);
+      });
     });
   </script>
 </body>
