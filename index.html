@@ -134,7 +134,7 @@
       animation: bounce 1s;
     }
     
-    /* Container ảnh: tăng 50% so với gốc (700×440px → 1050×660px), sau đó tăng thêm 30% nữa → khoảng 1365×858px */
+    /* Container ảnh: tăng 50% so với gốc (700×440px → 1050×660px), sau đó tăng thêm 30% nữa (tổng khoảng 1365×858px) */
     .image-container {
       position: relative;
       width: 100%;
@@ -199,14 +199,14 @@
       animation: fadeIn 1s ease-out;
     }
     
-    /* Nút TUTORIAL: chuyển xuống gần góc trái bên dưới, phóng to */
+    /* Nút TUTORIAL: chuyển sang màu vàng, đặt gần góc trái bên dưới */
     #tutorialBtn {
       position: fixed;
       bottom: 20px;
       left: 20px;
       padding: 16px 28px;
-      background: #28a745;
-      color: #fff;
+      background: #ff0;
+      color: #000;
       border: none;
       border-radius: 4px;
       font-size: 1.5rem;
@@ -219,7 +219,7 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
     
-    /* Modal Tutorial */
+    /* Modal TUTORIAL */
     #tutorialModal {
       position: fixed;
       top: 50%;
@@ -296,7 +296,7 @@
   <!-- Nút TUTORIAL -->
   <button id="tutorialBtn">TUTORIAL</button>
   
-  <!-- Modal Tutorial -->
+  <!-- Modal TUTORIAL -->
   <div id="tutorialModal">
     <span id="closeTutorial">×</span>
     <h3>TUTORIAL</h3>
