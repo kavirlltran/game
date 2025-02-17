@@ -13,7 +13,8 @@
     }
     body {
       font-family: Arial, sans-serif;
-      background: url('anh nen.jpg') no-repeat center center fixed;
+      /* Sử dụng "nen xanh.jpg" làm ảnh nền */
+      background: url('nen xanh.jpg') no-repeat center center fixed;
       background-size: cover;
       color: #333;
       text-align: center;
@@ -44,7 +45,7 @@
       border-radius: 8px;
       max-width: 800px;
       margin: 0 auto 20px;
-      color: #0a74da; /* Màu chữ xanh đậm */
+      color: #0a74da;
     }
     
     /* MÀN HÌNH */
@@ -100,7 +101,7 @@
       animation: fadeIn 1s ease-out;
     }
     
-    /* VÙNG CHỨA ẢNH: sử dụng CSS Grid để hiển thị 3 ảnh trên 1 hàng */
+    /* VÙNG CHỨA ẢNH: dùng CSS Grid để hiển thị 3 ảnh trên 1 hàng */
     #imageWrapper {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -117,7 +118,7 @@
       flex-direction: column;
       align-items: center;
       background: rgba(255,255,255,0.9);
-      padding: 0 30px; /* tăng padding lên 30px */
+      padding: 0 30px;
       border-radius: 10px;
     }
     
@@ -133,7 +134,7 @@
       animation: bounce 1s;
     }
     
-    /* Container ảnh tăng 50% so với gốc 700×440px → 1050×660px, sau đó tăng thêm 30%: tổng khoảng 1365×858px */
+    /* Container ảnh: tăng 50% so với gốc 700×440px → 1050×660px, sau đó tăng thêm 30%: tổng khoảng 1365×858px */
     .image-container {
       position: relative;
       width: 100%;
@@ -233,7 +234,7 @@
   
   <!-- Màn hình Bắt đầu -->
   <div id="startScreen" class="screen active">
-    <div class="text-container" style="background:#fff; border:2px solid #ccc; padding:15px; border-radius:8px; max-width:800px; margin:0 auto 20px; color:#0a74da;">
+    <div class="text-container">
       <h1>Trò chơi: Chọn Ảnh Đúng</h1>
       <p>
         Mỗi câu có 3 ảnh (1 đúng, 2 nhiễu).<br>
@@ -247,7 +248,7 @@
   
   <!-- Màn hình Game -->
   <div id="gameScreen" class="screen">
-    <div class="text-container" style="background:#fff; border:2px solid #ccc; padding:15px; border-radius:8px; max-width:800px; margin:0 auto 20px; color:#0a74da;">
+    <div class="text-container">
       <!-- Ban đầu chỉ hiển thị "Câu 1" -->
       <h2 id="questionTitle">Câu 1</h2>
     </div>
@@ -258,7 +259,7 @@
   
   <!-- Màn hình Kết thúc -->
   <div id="endScreen" class="screen">
-    <div class="text-container" style="background:#fff; border:2px solid #ccc; padding:15px; border-radius:8px; max-width:800px; margin:0 auto 20px; color:#0a74da;">
+    <div class="text-container">
       <h1>Kết thúc trò chơi</h1>
       <h2 id="resultText"></h2>
     </div>
@@ -270,7 +271,7 @@
     const audioCorrect = new Audio('true.mp3');
     const audioWrong = new Audio('failed.mp3');
     
-    // Các câu hỏi (không có hint nữa)
+    // Các câu hỏi (không có phần gợi ý)
     const questions = [
       {
         word: "face-to-face",
@@ -346,7 +347,7 @@
       nextBtn.disabled = true;
       updateTimerDisplay();
       
-      // Ban đầu, chỉ hiển thị "Câu X"
+      // Ban đầu chỉ hiển thị "Câu X"
       questionTitle.textContent = `Câu ${currentQuestionIndex + 1}`;
       
       const q = questions[currentQuestionIndex];
@@ -415,7 +416,7 @@
           clearInterval(timerInterval);
           showAllCovers();
           canSelect = true;
-          // Sau khi hết 6s, cập nhật tiêu đề câu hỏi thành "Câu X: [word]"
+          // Sau 6s, cập nhật tiêu đề câu hỏi thành "Câu X: [word]"
           const q = questions[currentQuestionIndex];
           questionTitle.textContent = `Câu ${currentQuestionIndex + 1}: ${q.word}`;
         }
