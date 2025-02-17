@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Trò chơi Chọn Ảnh – Khung White Rộng Hơn</title>
+  <title>Trò chơi Chọn Ảnh – Nhạc Nền & Chọn Lại Đáp Án</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     /* BASE RESET & NỀN */
@@ -31,6 +31,11 @@
       z-index: -1;
     }
     
+    /* NHẠC NỀN (ẩn) */
+    audio#bgMusic {
+      display: none;
+    }
+
     /* HIỆU ỨNG CHO TOÀN BỘ MÀN HÌNH */
     .screen {
       display: none;
@@ -103,17 +108,16 @@
       padding: 10px;
       animation: fadeIn 1s ease-out;
     }
-    /* Mỗi mục bao gồm số thứ tự và container ảnh */
+    /* Mỗi mục gồm số thứ tự và container ảnh */
     .image-item {
       display: flex;
       flex-direction: column;
       align-items: center;
-      /* Thêm khung nền trắng (với tone nhẹ phù hợp với nền) và padding ngang tăng lên */
       background: rgba(255,255,255,0.9);
       padding: 0 50px;
       border-radius: 10px;
     }
-    /* Số thứ tự – hiển thị riêng, luôn ở trên đầu */
+    /* Số thứ tự – tách riêng */
     .number-label {
       background: #ff9800;
       color: #fff;
@@ -124,11 +128,11 @@
       margin-bottom: 10px;
       animation: bounce 1s;
     }
-    /* Container ảnh giữ nguyên kích thước: 700×440px */
+    /* Container ảnh: giảm kích thước xuống 15% từ 700×440px -> 595×374px */
     .image-container {
       position: relative;
-      width: 700px;
-      height: 440px;
+      width: 595px;
+      height: 374px;
       border: 3px solid #ddd;
       border-radius: 10px;
       overflow: hidden;
@@ -209,7 +213,7 @@
       50% { transform: scale(1.05); }
       100% { transform: scale(1); }
     }
-    /* Responsive: trên điện thoại hiển thị các mục theo hàng dọc */
+    /* Responsive: trên điện thoại, các mục hiển thị theo hàng dọc */
     @media (max-width: 768px) {
       #imageWrapper {
         flex-direction: column;
@@ -226,6 +230,9 @@
   </style>
 </head>
 <body>
+
+  <!-- Nhạc nền -->
+  <audio id="bgMusic" src="nhac nen.mp3" loop autoplay></audio>
 
   <!-- Màn hình Bắt đầu -->
   <div id="startScreen" class="screen active">
@@ -297,7 +304,7 @@
     const viewTime = 5; // 5 giây xem ảnh
     let remainingTime = viewTime;
     let timerInterval = null;
-    let answerSelected = false;
+    let answerSelected = false; // Đánh dấu đã chọn đáp án đúng hay chưa
 
     // DOM Elements
     const startScreen = document.getElementById("startScreen");
@@ -344,7 +351,7 @@
       shuffleArray(allImages);
 
       allImages.forEach((imgSrc, index) => {
-        // Tạo phần tử bao bọc cho mỗi mục: gồm số thứ tự và container ảnh
+        // Tạo phần tử bao bọc cho mỗi mục gồm số thứ tự và container ảnh
         const item = document.createElement("div");
         item.className = "image-item";
 
@@ -374,21 +381,28 @@
         wrongmark.textContent = "✗";
 
         container.addEventListener("click", () => {
-          // Chỉ cho phép click nếu lớp che đang hiển thị và chưa chọn đáp án nào
+          // Cho phép click nếu lớp che đang hiển thị và chưa có đáp án đúng nào được chọn
           if (!cover.classList.contains("show") || answerSelected) return;
-          container.classList.add("selected");
-          cover.classList.remove("show");
-          answerSelected = true;
+          // Nếu đáp án đúng
           if (imgSrc === q.correct) {
+            container.classList.add("selected");
+            cover.classList.remove("show");
+            answerSelected = true;
             checkmark.style.display = "block";
             score++;
             audioCorrect.play();
+            disableAllClicks();
+            nextBtn.disabled = false;
           } else {
+            // Nếu chọn sai: hiển thị dấu X, phát âm thanh sai, sau 1 giây che lại ảnh để thử lại
             wrongmark.style.display = "block";
             audioWrong.play();
+            setTimeout(() => {
+              wrongmark.style.display = "none";
+              cover.classList.add("show");
+            }, 1000);
+            // Không đặt answerSelected = true để cho phép chọn lại
           }
-          disableAllClicks();
-          nextBtn.disabled = false;
         });
 
         container.appendChild(img);
