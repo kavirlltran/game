@@ -1,134 +1,371 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trò Chơi Học Từ Vựng</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 20px;
-        }
-        .question-container {
-            margin-bottom: 20px;
-        }
-        .choices-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .choice {
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin: 5px;
-            width: 200px;
-            cursor: pointer;
-        }
-        .choice:hover {
-            background-color: #e0e0e0;
-        }
-        .hidden {
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Trò chơi Từ vựng</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #f7f7f7;
+      color: #333;
+    }
+    /* 3 màn hình chính */
+    .screen {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    #start-screen,
+    #game-screen,
+    #end-screen {
+      display: none; /* Mặc định ẩn */
+    }
+    /* Khi muốn hiển thị, ta dùng JS để đổi thành flex */
+    .active {
+      display: flex !important;
+    }
+
+    /* Các khối input, nút */
+    .input-row {
+      margin: 10px 0;
+    }
+    input[type="text"], input[type="number"] {
+      padding: 5px;
+      width: 200px;
+    }
+    button {
+      cursor: pointer;
+      padding: 10px 20px;
+      margin: 5px;
+    }
+    button:hover {
+      background: #ddd;
+    }
+    h1, h2, h3 {
+      margin: 10px 0;
+      text-align: center;
+    }
+
+    /* Phần game */
+    #header {
+      display: flex;
+      width: 100%;
+      justify-content: space-around;
+      align-items: center;
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+    }
+    #timer {
+      color: red;
+      font-weight: bold;
+    }
+    #question-area {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    #question-image {
+      max-width: 300px;
+      margin-top: 10px;
+    }
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
-    <h1>Trò Chơi Học Từ Vựng</h1>
-    <div id="gameContainer">
-        <div id="questionContainer" class="question-container"></div>
-        <div id="choicesContainer" class="choices-container"></div>
-        <button id="nextButton" class="hidden">Câu tiếp theo</button>
+
+<!-- Màn hình START -->
+<div id="start-screen" class="screen active">
+  <div>
+    <h1>Thiết lập trò chơi</h1>
+    <div class="input-row">
+      <label>Tên đội 1: </label>
+      <input type="text" id="team1NameInput" value="Team 1" />
     </div>
-    <div id="resultContainer" class="hidden">
-        <h2>Kết quả</h2>
-        <p id="score"></p>
-        <button id="restartButton">Chơi lại</button>
+    <div class="input-row">
+      <label>Tên đội 2: </label>
+      <input type="text" id="team2NameInput" value="Team 2" />
     </div>
-    <script>
-        const questions = [
-            {
-                question: "Học trực tuyến là gì?",
-                choices: ["Online Learning", "Blended Learning", "Face to Face Learning", "Email"],
-                correctAnswer: "Online Learning"
-            },
-            {
-                question: "Học kết hợp là gì?",
-                choices: ["Online Learning", "Blended Learning", "Strategy", "Prepare for"],
-                correctAnswer: "Blended Learning"
-            },
-            // Thêm các câu hỏi khác tương tự
-        ];
+    <div class="input-row">
+      <label>Thời gian mỗi câu (giây): </label>
+      <input type="number" id="timeInput" value="30" />
+    </div>
+    <button id="startBtn">START</button>
+  </div>
+</div>
 
-        let currentQuestionIndex = 0;
-        let score = 0;
+<!-- Màn hình GAME -->
+<div id="game-screen" class="screen">
+  <!-- Header hiển thị điểm 2 đội + timer -->
+  <div id="header">
+    <div id="team1Score"></div>
+    <div id="timer"></div>
+    <div id="team2Score"></div>
+  </div>
 
-        const questionContainer = document.getElementById('questionContainer');
-        const choicesContainer = document.getElementById('choicesContainer');
-        const nextButton = document.getElementById('nextButton');
-        const resultContainer = document.getElementById('resultContainer');
-        const scoreDisplay = document.getElementById('score');
-        const restartButton = document.getElementById('restartButton');
+  <!-- Nội dung câu hỏi -->
+  <div id="question-area">
+    <h2 id="question-title"></h2>
+    <p><em id="question-hint"></em></p>
+    <img id="question-image" src="" alt="Question Image" />
+  </div>
 
-        function startGame() {
-            currentQuestionIndex = 0;
-            score = 0;
-            resultContainer.classList.add('hidden');
-            gameContainer.classList.remove('hidden');
-            showQuestion();
-        }
+  <!-- Nút cộng điểm -->
+  <div class="btn-row">
+    <button id="team1CorrectBtn">Team 1 Trả lời đúng</button>
+    <button id="team2CorrectBtn">Team 2 Trả lời đúng</button>
+  </div>
 
-        function showQuestion() {
-            resetState();
-            const currentQuestion = questions[currentQuestionIndex];
-            questionContainer.innerText = currentQuestion.question;
+  <!-- Nút Next / Finish -->
+  <div class="btn-row">
+    <button id="nextBtn">Next</button>
+    <button id="finishBtn" style="display:none;">Finish</button>
+  </div>
+</div>
 
-            currentQuestion.choices.forEach(choice => {
-                const button = document.createElement('button');
-                button.innerText = choice;
-                button.classList.add('choice');
-                button.addEventListener('click', () => selectAnswer(choice));
-                choicesContainer.appendChild(button);
-            });
-        }
+<!-- Màn hình END -->
+<div id="end-screen" class="screen">
+  <h1>Kết quả chung cuộc</h1>
+  <h2 id="finalResult"></h2>
+  <button id="playAgainBtn">Chơi lại</button>
+</div>
 
-        function resetState() {
-            nextButton.classList.add('hidden');
-            while (choicesContainer.firstChild) {
-                choicesContainer.removeChild(choicesContainer.firstChild);
-            }
-        }
+<script>
+  // ------------------------------------------------------
+  // 1. DỮ LIỆU CÂU HỎI
+  // ------------------------------------------------------
+  const questions = [
+    {
+      word: "Face-to-face",
+      hint: "Học trực tiếp tại lớp",
+      image: "face_to_face_learning.jpg"
+    },
+    {
+      word: "Prepare",
+      hint: "Chuẩn bị",
+      image: "prepare_for.webp"
+    },
+    {
+      word: "Strategy",
+      hint: "Chiến lược",
+      image: "strategy.webp"
+    },
+    {
+      word: "Online learning",
+      hint: "Học trực tuyến",
+      image: "online_learning.webp"
+    },
+    {
+      word: "Blended learning",
+      hint: "Học kết hợp (trực tuyến + trực tiếp)",
+      image: "blended_learning.webp"
+    }
+  ];
 
-        function selectAnswer(choice) {
-            const correct = choice === questions[currentQuestionIndex].correctAnswer;
-            if (correct) {
-                score++;
-                alert('Đúng rồi!');
-            } else {
-                alert('Sai rồi!');
-            }
-            nextButton.classList.remove('hidden');
-        }
+  // ------------------------------------------------------
+  // 2. BIẾN QUẢN LÝ TRẠNG THÁI
+  // ------------------------------------------------------
+  let currentQuestionIndex = 0;
+  let team1Name = "Team 1";
+  let team2Name = "Team 2";
+  let team1Score = 0;
+  let team2Score = 0;
+  let chosenTime = 30; // thời gian mỗi câu
+  let timeLeft = 30;   // biến đếm ngược
+  let timerInterval = null;
 
-        function showResult() {
-            gameContainer.classList.add('hidden');
-            resultContainer.classList.remove('hidden');
-            scoreDisplay.innerText = `Bạn trả lời đúng ${score} trên ${questions.length} câu.`;
-        }
+  // Lấy các phần tử HTML
+  const startScreen = document.getElementById("start-screen");
+  const gameScreen = document.getElementById("game-screen");
+  const endScreen = document.getElementById("end-screen");
 
-        nextButton.addEventListener('click', () => {
-            currentQuestionIndex++;
-            if (currentQuestionIndex < questions.length) {
-                showQuestion();
-            } else {
-                showResult();
-            }
-        });
+  const team1NameInput = document.getElementById("team1NameInput");
+  const team2NameInput = document.getElementById("team2NameInput");
+  const timeInput = document.getElementById("timeInput");
 
-        restartButton.addEventListener('click', startGame);
+  const startBtn = document.getElementById("startBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const finishBtn = document.getElementById("finishBtn");
+  const playAgainBtn = document.getElementById("playAgainBtn");
 
-        startGame();
-    </script>
+  const team1ScoreDisplay = document.getElementById("team1Score");
+  const team2ScoreDisplay = document.getElementById("team2Score");
+  const timerDisplay = document.getElementById("timer");
+
+  const questionTitle = document.getElementById("question-title");
+  const questionHint = document.getElementById("question-hint");
+  const questionImage = document.getElementById("question-image");
+
+  const team1CorrectBtn = document.getElementById("team1CorrectBtn");
+  const team2CorrectBtn = document.getElementById("team2CorrectBtn");
+
+  const finalResult = document.getElementById("finalResult");
+
+  // ------------------------------------------------------
+  // 3. HÀM CHUYỂN MÀN HÌNH
+  // ------------------------------------------------------
+  function showScreen(screenName) {
+    // Ẩn hết
+    startScreen.classList.remove("active");
+    gameScreen.classList.remove("active");
+    endScreen.classList.remove("active");
+    // Hiển thị màn hình mong muốn
+    if (screenName === "start") {
+      startScreen.classList.add("active");
+    } else if (screenName === "game") {
+      gameScreen.classList.add("active");
+    } else if (screenName === "end") {
+      endScreen.classList.add("active");
+    }
+  }
+
+  // ------------------------------------------------------
+  // 4. BẮT ĐẦU TRÒ CHƠI
+  // ------------------------------------------------------
+  function startGame() {
+    // Lấy thông tin từ input
+    team1Name = team1NameInput.value || "Team 1";
+    team2Name = team2NameInput.value || "Team 2";
+    chosenTime = parseInt(timeInput.value) || 30;
+
+    // Đặt lại điểm và câu hỏi
+    team1Score = 0;
+    team2Score = 0;
+    currentQuestionIndex = 0;
+
+    // Chuyển sang màn hình game
+    showScreen("game");
+    loadQuestion();
+  }
+
+  // ------------------------------------------------------
+  // 5. HIỂN THỊ CÂU HỎI
+  // ------------------------------------------------------
+  function loadQuestion() {
+    // Nếu hết câu hỏi -> sang màn hình end
+    if (currentQuestionIndex >= questions.length) {
+      finishGame();
+      return;
+    }
+
+    // Lấy câu hỏi hiện tại
+    const q = questions[currentQuestionIndex];
+
+    // Cập nhật nội dung
+    questionTitle.textContent = `Câu ${currentQuestionIndex + 1}: ${q.word}`;
+    questionHint.textContent = q.hint;
+    questionImage.src = q.image;
+
+    // Cập nhật điểm
+    team1ScoreDisplay.textContent = `${team1Name}: ${team1Score}`;
+    team2ScoreDisplay.textContent = `${team2Name}: ${team2Score}`;
+
+    // Hiển thị/ẩn nút Next/Finish
+    if (currentQuestionIndex < questions.length - 1) {
+      nextBtn.style.display = "inline-block";
+      finishBtn.style.display = "none";
+    } else {
+      nextBtn.style.display = "none";
+      finishBtn.style.display = "inline-block";
+    }
+
+    // Cài lại thời gian
+    timeLeft = chosenTime;
+    updateTimer();
+    startTimer();
+  }
+
+  // ------------------------------------------------------
+  // 6. QUẢN LÝ TIMER
+  // ------------------------------------------------------
+  function startTimer() {
+    stopTimer(); // clear bất kỳ interval cũ
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      if (timeLeft <= 0) {
+        timeLeft = 0;
+        stopTimer();
+      }
+      updateTimer();
+    }, 1000);
+  }
+
+  function stopTimer() {
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+  }
+
+  function updateTimer() {
+    timerDisplay.textContent = `${timeLeft}s`;
+  }
+
+  // ------------------------------------------------------
+  // 7. SỰ KIỆN CỘNG ĐIỂM
+  // ------------------------------------------------------
+  function team1Correct() {
+    team1Score++;
+    team1ScoreDisplay.textContent = `${team1Name}: ${team1Score}`;
+  }
+
+  function team2Correct() {
+    team2Score++;
+    team2ScoreDisplay.textContent = `${team2Name}: ${team2Score}`;
+  }
+
+  // ------------------------------------------------------
+  // 8. NEXT VÀ FINISH
+  // ------------------------------------------------------
+  function nextQuestion() {
+    stopTimer();
+    currentQuestionIndex++;
+    loadQuestion();
+  }
+
+  function finishGame() {
+    stopTimer();
+    showScreen("end");
+    // Tính kết quả
+    let resultText = `${team1Name}: ${team1Score} điểm\n` +
+                     `${team2Name}: ${team2Score} điểm\n\n`;
+    if (team1Score === team2Score) {
+      resultText += "Hòa nhau!";
+    } else if (team1Score > team2Score) {
+      resultText += `${team1Name} Chiến thắng!`;
+    } else {
+      resultText += `${team2Name} Chiến thắng!`;
+    }
+    finalResult.textContent = resultText;
+  }
+
+  // ------------------------------------------------------
+  // 9. CHƠI LẠI
+  // ------------------------------------------------------
+  function playAgain() {
+    showScreen("start");
+  }
+
+  // ------------------------------------------------------
+  // 10. GẮN SỰ KIỆN CHO NÚT
+  // ------------------------------------------------------
+  startBtn.addEventListener("click", startGame);
+  nextBtn.addEventListener("click", nextQuestion);
+  finishBtn.addEventListener("click", finishGame);
+  playAgainBtn.addEventListener("click", playAgain);
+
+  team1CorrectBtn.addEventListener("click", team1Correct);
+  team2CorrectBtn.addEventListener("click", team2Correct);
+</script>
+
 </body>
 </html>
