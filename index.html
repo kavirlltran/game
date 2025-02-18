@@ -5,7 +5,7 @@
   <title>SECRET WINDOW</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* Import font FS PFBeauSansPro-BlackItalic nếu cần */
+    /* Import font FS PFBeauSansPro-BlackItalic */
     @font-face {
       font-family: 'FS PFBeauSansPro';
       src: url('FS PFBeauSansPro-BlackItalic.ttf') format('truetype');
@@ -33,6 +33,23 @@
       z-index: -1;
     }
     
+    /* Loading Screen */
+    #loadingScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: #00008B;
+      z-index: 2000;
+      display: none;
+    }
+    
     /* NHẠC NỀN */
     audio#bgMusic {
       display: none;
@@ -47,7 +64,7 @@
       max-width: 800px;
       margin: 0 auto 20px;
       background: rgba(255,255,255,0.6);
-      color: #00008B;  /* Màu chữ xanh đậm cho toàn bộ nội dung trong khung */
+      color: #00008B;  /* Màu chữ xanh đậm */
     }
     
     /* TIMER: hiển thị "Time:" với khung, in đậm, phóng to */
@@ -81,7 +98,6 @@
     h1 {
       font-size: 2rem;
       animation: pulse 2s infinite;
-      /* Đổi tiêu đề Start sang màu xanh đậm */
       color: #00008B;
     }
     h2 {
@@ -110,7 +126,7 @@
       cursor: not-allowed;
     }
     
-    /* VÙNG CHỨA ẢNH: dùng CSS Grid hiển thị 3 ảnh trên 1 hàng */
+    /* VÙNG CHỨA ẢNH: CSS Grid hiển thị 3 ảnh trên 1 hàng */
     #imageWrapper {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -121,7 +137,7 @@
       margin: 20px auto;
     }
     
-    /* Mỗi mục gồm số thứ tự và container ảnh */
+    /* Mỗi mục: số thứ tự và container ảnh */
     .image-item {
       display: flex;
       flex-direction: column;
@@ -144,7 +160,7 @@
       animation: bounce 1s;
     }
     
-    /* Container ảnh: sử dụng "pic.png" làm viền */
+    /* Container ảnh: sử dụng ảnh "pic.png" làm viền */
     .image-container {
       position: relative;
       width: 100%;
@@ -434,8 +450,31 @@
       // Khi nhấn Start, chạy nhạc "music.mp3"
       const musicAudio = new Audio('music.mp3');
       musicAudio.play().catch(err => console.log("Music autoplay bị chặn:", err));
+      
+      // Hiển thị hiệu ứng loading trong 1 giây trước khi chuyển sang câu hỏi
       showScreen("game");
-      loadQuestion();
+      // Tạo một hiệu ứng loading đơn giản (có thể là một text "Loading..." hoặc spinner)
+      const loadingOverlay = document.createElement("div");
+      loadingOverlay.id = "loadingOverlay";
+      loadingOverlay.style.position = "fixed";
+      loadingOverlay.style.top = "0";
+      loadingOverlay.style.left = "0";
+      loadingOverlay.style.width = "100%";
+      loadingOverlay.style.height = "100%";
+      loadingOverlay.style.background = "rgba(255,255,255,0.8)";
+      loadingOverlay.style.display = "flex";
+      loadingOverlay.style.alignItems = "center";
+      loadingOverlay.style.justifyContent = "center";
+      loadingOverlay.style.fontSize = "2rem";
+      loadingOverlay.style.color = "#00008B";
+      loadingOverlay.style.zIndex = "1500";
+      loadingOverlay.textContent = "Loading...";
+      document.body.appendChild(loadingOverlay);
+      
+      setTimeout(() => {
+        document.body.removeChild(loadingOverlay);
+        loadQuestion(); // Gọi hàm loadQuestion sau 1 giây
+      }, 1000);
     }
     
     function loadQuestion() {
@@ -509,21 +548,23 @@
         imageWrapper.appendChild(item);
       });
     
-      // Phát nhạc "tiktak.mp3" và bắt đầu đếm ngược
-      tiktakAudio.play().catch(err => console.log("Tiktak autoplay bị chặn:", err));
-      timerInterval = setInterval(() => {
-        remainingTime--;
-        updateTimerDisplay();
-        if (remainingTime <= 0) {
-          clearInterval(timerInterval);
-          tiktakAudio.pause();
-          tiktakAudio.currentTime = 0;
-          showAllCovers();
-          canSelect = true;
-          // Sau 6s, cập nhật tiêu đề câu hỏi thành "Question X: [word]"
-          const q = questions[currentQuestionIndex];
-          questionTitle.textContent = `Question ${currentQuestionIndex + 1}: ${q.word}`;
-        }
+      // Đợi 1 giây trước khi bắt đầu đếm ngược, sau đó phát nhạc "tiktak.mp3"
+      setTimeout(() => {
+        tiktakAudio.play().catch(err => console.log("Tiktak autoplay bị chặn:", err));
+        timerInterval = setInterval(() => {
+          remainingTime--;
+          updateTimerDisplay();
+          if (remainingTime <= 0) {
+            clearInterval(timerInterval);
+            tiktakAudio.pause();
+            tiktakAudio.currentTime = 0;
+            showAllCovers();
+            canSelect = true;
+            // Sau 6s, cập nhật tiêu đề câu hỏi thành "Question X: [word]"
+            const q = questions[currentQuestionIndex];
+            questionTitle.textContent = `Question ${currentQuestionIndex + 1}: ${q.word}`;
+          }
+        }, 1000);
       }, 1000);
     }
     
