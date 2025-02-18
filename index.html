@@ -37,21 +37,18 @@
       display: none;
     }
     
-    /* KHUNG CHỮ: sử dụng "text.png" làm viền */
+    /* KHUNG CHỮ – sử dụng nền trắng với độ trong suốt cao */
     .text-container {
-      border: 10px solid transparent;
-      border-image: url('text.png') 30 stretch;
+      background: rgba(255, 255, 255, 0.6);
+      border: 2px solid rgba(204, 204, 204, 0.6);
       padding: 15px;
       border-radius: 8px;
       max-width: 800px;
       margin: 0 auto 20px;
-      /* Màu chữ để nổi bật */
       color: #0a74da;
-      /* Giữ nền trắng với độ trong suốt vừa phải */
-      background: rgba(255,255,255,0.6);
     }
     
-    /* TIMER: hiển thị "Time:" với khung và in đậm */
+    /* TIMER: hiển thị "Time:" với khung, in đậm */
     #timerDisplay {
       font-size: 1.3rem;
       font-weight: bold;
@@ -85,7 +82,6 @@
     }
     h2 {
       font-size: 1.8rem;
-      /* Đổi màu tiêu đề câu hỏi để nổi bật */
       color: #ff4500;
     }
     
@@ -121,7 +117,7 @@
       margin: 20px auto;
     }
     
-    /* Mỗi mục: số thứ tự và container ảnh */
+    /* Mỗi mục gồm số thứ tự và container ảnh */
     .image-item {
       display: flex;
       flex-direction: column;
@@ -230,7 +226,7 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
     
-    /* Modal TUTORIAL: xuất hiện ở giữa màn hình khi được kích, nằm bên dưới nút Next */
+    /* Modal TUTORIAL: xuất hiện ở giữa màn hình khi được kích, không chiếm vị trí khi ẩn */
     #tutorialModal {
       position: fixed;
       top: 50%;
@@ -352,10 +348,10 @@
   <!-- Màn hình End -->
   <div id="endScreen" class="screen">
     <div class="text-container">
-      <h1>Kết thúc trò chơi</h1>
+      <h1>Game Over</h1>
       <h2 id="resultText"></h2>
     </div>
-    <button class="btn" id="replayBtn">Chơi lại</button>
+    <button class="btn" id="replayBtn">Play Again</button>
   </div>
   
   <script>
@@ -573,8 +569,7 @@
       showScreen("start");
     });
     
-    // Xử lý modal TUTORIAL: bảng Tutorial sẽ xuất hiện ở giữa màn hình Game khi nhấn nút,
-    // và khi ẩn đi sẽ hoàn toàn ra khỏi giao diện.
+    // Xử lý modal TUTORIAL: bảng Tutorial sẽ xuất hiện ở giữa màn hình Game khi nhấn nút, và khi ẩn đi sẽ hoàn toàn ra khỏi giao diện.
     tutorialBtn.addEventListener("click", () => {
       tutorialModal.classList.add("show");
     });
