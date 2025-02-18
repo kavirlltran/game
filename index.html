@@ -13,7 +13,7 @@
     }
     body {
       font-family: Arial, sans-serif;
-      /* Sử dụng "nen xanh.jpg" làm ảnh nền */
+      /* Dùng "nen xanh.jpg" làm ảnh nền */
       background: url('nen xanh.jpg') no-repeat center center fixed;
       background-size: cover;
       color: #333;
@@ -37,10 +37,10 @@
       display: none;
     }
     
-    /* KHUNG CHỮ – khung trắng đơn giản */
+    /* KHUNG CHỮ – sử dụng viền màu xanh nhạt phù hợp với nền */
     .text-container {
       background: #fff;
-      border: 2px solid #ccc;
+      border: 2px solid #b3d4fc;
       padding: 15px;
       border-radius: 8px;
       max-width: 800px;
@@ -48,7 +48,7 @@
       color: #0a74da;
     }
     
-    /* TIMER: hiển thị dưới dạng "Time:" được đóng khung và in đậm */
+    /* TIMER: đổi thành "Time:" và đóng khung, in đậm */
     #timerDisplay {
       font-size: 1.3rem;
       font-weight: bold;
@@ -84,7 +84,7 @@
       font-size: 1.8rem;
     }
     
-    /* NÚT */
+    /* NÚT chung */
     .btn {
       padding: 12px 24px;
       margin: 10px;
@@ -105,7 +105,7 @@
       cursor: not-allowed;
     }
     
-    /* VÙNG CHỨA ẢNH: CSS Grid hiển thị 3 ảnh trên 1 hàng */
+    /* VÙNG CHỨA ẢNH: sử dụng CSS Grid cho 3 ảnh trên 1 hàng */
     #imageWrapper {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -116,7 +116,7 @@
       margin: 20px auto;
     }
     
-    /* Mỗi mục gồm số thứ tự và container ảnh */
+    /* Mỗi mục: bao gồm số thứ tự và container ảnh */
     .image-item {
       display: flex;
       flex-direction: column;
@@ -138,13 +138,13 @@
       animation: bounce 1s;
     }
     
-    /* Container ảnh: tăng kích thước (50% gốc + thêm 30% → khoảng 1365×858px) */
+    /* Container ảnh: tăng kích thước 50% so với gốc (700×440px → 1050×660px), sau đó tăng thêm 30% → khoảng 1365×858px */
     .image-container {
       position: relative;
       width: 100%;
       max-width: 1365px;
       aspect-ratio: 1365 / 858;
-      border: 3px solid #ddd;
+      border: 3px solid #b3d4fc;
       border-radius: 10px;
       overflow: hidden;
       background: #eee;
@@ -223,27 +223,28 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
     
-    /* Modal TUTORIAL: xuất hiện bên dưới nút Next */
+    /* Modal TUTORIAL: xuất hiện ở giữa màn hình khi hiển thị, và khi ẩn sẽ không chiếm vị trí */
     #tutorialModal {
-      position: relative;
-      margin: 20px auto;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
       background: #fff;
       border: 3px solid #0077cc;
       border-radius: 8px;
       max-width: 500px;
       width: 90%;
       padding: 20px;
-      z-index: 10;
+      z-index: 1000;
       opacity: 0;
-      transform: scale(0.8);
+      pointer-events: none;
       transition: all 0.5s ease;
       box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-      display: none;
     }
     #tutorialModal.show {
-      display: block;
       opacity: 1;
-      transform: scale(1);
+      transform: translate(-50%, -50%) scale(1);
+      pointer-events: auto;
     }
     #tutorialModal h3 {
       margin-bottom: 10px;
@@ -301,6 +302,18 @@
   <!-- Nút TUTORIAL -->
   <button id="tutorialBtn">TUTORIAL</button>
   
+  <!-- Modal TUTORIAL -->
+  <div id="tutorialModal">
+    <span id="closeTutorial">×</span>
+    <h3>TUTORIAL</h3>
+    <p>
+      B1: Nhấn <strong style="border: 2px solid #0077cc; padding: 5px 10px; border-radius: 4px;">Start</strong> để vào game.<br>
+      B2: Học sinh sẽ quan sát hình ảnh được mở ra từ ô cửa trong khoảng thời gian đã chọn.
+      Sau khi thời gian kết thúc, ô cửa sẽ đóng lại và hiển thị flashcard từ vựng/âm thanh của từ vựng.
+      Nhiệm vụ của học sinh là ghi nhớ đúng từ đó nằm trong ô cửa nào và đập tay vào đúng ô cửa đó.
+    </p>
+  </div>
+  
   <!-- Màn hình Start -->
   <div id="startScreen" class="screen active">
     <div class="text-container">
@@ -324,7 +337,7 @@
     <div id="timerDisplay"></div>
     <div id="imageWrapper"></div>
     <button class="btn" id="nextBtn" disabled>Next</button>
-    <!-- Modal TUTORIAL xuất hiện bên dưới nút Next -->
+    <!-- Modal Tutorial sẽ xuất hiện bên dưới nút Next -->
     <div id="tutorialModal">
       <span id="closeTutorial">×</span>
       <h3>TUTORIAL</h3>
@@ -514,7 +527,6 @@
     }
     
     function updateTimerDisplay() {
-      // Đổi dòng hiển thị thời gian thành "Time: "
       timerDisplay.textContent = `Time: ${remainingTime}s`;
     }
     
@@ -550,6 +562,14 @@
     startBtn.addEventListener("click", startGame);
     replayBtn.addEventListener("click", () => {
       showScreen("start");
+    });
+    
+    // Xử lý nút TUTORIAL và modal: Bảng Tutorial sẽ xuất hiện ở giữa màn hình khi nhấn nút, và khi ẩn đi sẽ hoàn toàn ra phía sau.
+    tutorialBtn.addEventListener("click", () => {
+      tutorialModal.classList.add("show");
+    });
+    closeTutorial.addEventListener("click", () => {
+      tutorialModal.classList.remove("show");
     });
     
     window.addEventListener('load', () => {
