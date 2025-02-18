@@ -37,7 +37,7 @@
       display: none;
     }
     
-    /* KHUNG CHỮ – sử dụng nền trắng với độ trong suốt cao để hòa quyện cùng nền */
+    /* KHUNG CHỮ – sử dụng nền trắng với độ trong suốt cao */
     .text-container {
       background: rgba(255, 255, 255, 0.6);
       border: 2px solid rgba(204, 204, 204, 0.6);
@@ -45,15 +45,12 @@
       border-radius: 8px;
       max-width: 800px;
       margin: 0 auto 20px;
+      /* Mặc định chữ cho khung này sẽ được đặt riêng cho tiêu đề (h1, h2) và mô tả (p) */
       color: #0a74da;
     }
-    
-    /* Đổi màu tiêu đề để nổi bật */
-    #startScreen h1 {
-      color: #ff4500; /* màu cam đỏ */
-    }
-    #gameScreen h2 {
-      color: #ff4500; /* màu cam đỏ */
+    /* Đổi màu phần mô tả hướng dẫn sang đen */
+    .text-container p {
+      color: #000;
     }
     
     /* TIMER: hiển thị "Time:" với khung, in đậm */
@@ -92,7 +89,7 @@
       font-size: 1.8rem;
     }
     
-    /* NÚT */
+    /* NÚT chung */
     .btn {
       padding: 12px 24px;
       margin: 10px;
@@ -512,7 +509,7 @@
         imageWrapper.appendChild(item);
       });
     
-      // Khi bắt đầu đếm ngược, phát nhạc tiktak
+      // Phát nhạc "tiktak.mp3" và bắt đầu đếm ngược
       tiktakAudio.play().catch(err => console.log("Tiktak autoplay bị chặn:", err));
       timerInterval = setInterval(() => {
         remainingTime--;
@@ -575,7 +572,7 @@
       showScreen("start");
     });
     
-    // Xử lý modal TUTORIAL: Bảng Tutorial sẽ xuất hiện ở giữa màn hình khi nhấn nút, và ẩn đi sẽ hoàn toàn ra khỏi giao diện.
+    // Xử lý modal TUTORIAL: Bảng Tutorial sẽ xuất hiện ở giữa màn hình Game khi nhấn nút, và khi ẩn đi sẽ không ảnh hưởng đến các nút khác.
     tutorialBtn.addEventListener("click", () => {
       tutorialModal.classList.add("show");
     });
