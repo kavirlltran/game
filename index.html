@@ -5,15 +5,16 @@
   <title>SECRET WINDOW</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* BASE RESET & NỀN */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    /* Import font iCiel_Borsok */
+    @font-face {
+      font-family: 'iCiel_Borsok';
+      src: url('iCiel_Borsok.otf') format('opentype');
     }
+    
+    /* Áp dụng font và in đậm cho toàn bộ nội dung */
     body {
-      font-family: Arial, sans-serif;
-      /* Sử dụng "nen xanh.jpg" làm ảnh nền */
+      font-family: 'iCiel_Borsok', sans-serif;
+      font-weight: bold;
       background: url('nen xanh.jpg') no-repeat center center fixed;
       background-size: cover;
       color: #333;
@@ -37,18 +38,28 @@
       display: none;
     }
     
-    /* KHUNG CHỮ – sử dụng nền trắng với độ trong suốt cao */
+    /* KHUNG CHỮ – sử dụng ảnh "text.png" làm viền (nếu cần) */
     .text-container {
-      background: rgba(255, 255, 255, 0.6);
-      border: 2px solid rgba(204, 204, 204, 0.6);
+      border: 10px solid transparent;
+      border-image: url('text.png') 30 stretch;
       padding: 15px;
       border-radius: 8px;
       max-width: 800px;
       margin: 0 auto 20px;
-      color: #0a74da;
+      /* Dùng nền trắng với độ trong suốt cao */
+      background: rgba(255,255,255,0.6);
     }
     
-    /* TIMER: hiển thị "Time:" với khung, in đậm */
+    /* Đổi màu tiêu đề ở màn hình Start sang vàng */
+    #startScreen h1 {
+      color: yellow;
+    }
+    /* Đổi màu phần mô tả hướng dẫn sang đen */
+    #startScreen p, #tutorialModal p {
+      color: #000;
+    }
+    
+    /* TIMER: hiển thị "Time:" với khung và in đậm */
     #timerDisplay {
       font-size: 1.3rem;
       font-weight: bold;
@@ -122,8 +133,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      background: rgba(255,255,255,0.6);
       border: 2px solid rgba(204,204,204,0.6);
+      background: rgba(255,255,255,0.6);
       padding: 0 30px;
       border-radius: 10px;
     }
@@ -140,7 +151,7 @@
       animation: bounce 1s;
     }
     
-    /* Container ảnh: sử dụng "pic.png" làm viền */
+    /* Container ảnh: sử dụng ảnh "pic.png" làm viền */
     .image-container {
       position: relative;
       width: 100%;
@@ -158,7 +169,6 @@
       transform: scale(1.02);
       box-shadow: 0 6px 12px rgba(0,0,0,0.3);
     }
-    /* Ảnh bên trong được phóng to 30% so với container */
     .image-container img {
       width: 100%;
       height: 100%;
@@ -315,8 +325,8 @@
       <h1>SECRET WINDOW</h1>
       <p>
         B1: Nhấn <span style="font-weight: bold; border: 2px solid #0077cc; padding: 5px 10px; border-radius: 4px;">Start</span> để vào game;<br>
-        B2: Học sinh sẽ quan sát hình ảnh được mở ra từ ô cửa trong khoảng thời gian đã chọn,
-        sau đó ô cửa đóng lại và hiển thị flashcard từ vựng/âm thanh của từ vựng.
+        B2: Học sinh sẽ quan sát hình ảnh được mở ra từ ô cửa trong khoảng thời gian đã chọn, 
+        sau đó ô cửa đóng lại và hiển thị flashcard từ vựng/âm thanh của từ vựng. 
         Nhiệm vụ của học sinh là ghi nhớ đúng từ đó nằm trong ô cửa nào và đập tay vào đúng ô cửa đó.
       </p>
     </div>
@@ -338,8 +348,8 @@
       <h3>TUTORIAL</h3>
       <p>
         B1: Nhấn <strong style="border: 2px solid #0077cc; padding: 5px 10px; border-radius: 4px;">Start</strong> để vào game.<br>
-        B2: Học sinh sẽ quan sát hình ảnh được mở ra từ ô cửa trong khoảng thời gian đã chọn.
-        Sau khi thời gian kết thúc, ô cửa sẽ đóng lại và hiển thị flashcard từ vựng/âm thanh của từ vựng.
+        B2: Học sinh sẽ quan sát hình ảnh được mở ra từ ô cửa trong khoảng thời gian đã chọn. 
+        Sau khi thời gian kết thúc, ô cửa sẽ đóng lại và hiển thị flashcard từ vựng/âm thanh của từ vựng. 
         Nhiệm vụ của học sinh là ghi nhớ đúng từ đó nằm trong ô cửa nào và đập tay vào đúng ô cửa đó.
       </p>
     </div>
@@ -569,7 +579,8 @@
       showScreen("start");
     });
     
-    // Xử lý modal TUTORIAL: bảng Tutorial sẽ xuất hiện ở giữa màn hình Game khi nhấn nút, và khi ẩn đi sẽ hoàn toàn ra khỏi giao diện.
+    // Xử lý modal TUTORIAL: bảng Tutorial sẽ xuất hiện ở giữa màn hình Game khi nhấn nút,
+    // và khi ẩn đi sẽ hoàn toàn ra khỏi giao diện.
     tutorialBtn.addEventListener("click", () => {
       tutorialModal.classList.add("show");
     });
