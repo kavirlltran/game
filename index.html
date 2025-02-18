@@ -5,15 +5,13 @@
   <title>SECRET WINDOW</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* Import font FS PFBeauSansPro-BlackItalic */
+    /* Import font FS PFBeauSansPro-BlackItalic nếu cần */
     @font-face {
       font-family: 'FS PFBeauSansPro';
       src: url('FS PFBeauSansPro-BlackItalic.ttf') format('truetype');
-      font-weight: normal;
-      font-style: normal;
     }
     
-    /* Áp dụng font cho toàn bộ nội dung */
+    /* Áp dụng font và in đậm cho toàn bộ nội dung */
     body {
       font-family: 'FS PFBeauSansPro', sans-serif;
       font-weight: bold;
@@ -49,12 +47,12 @@
       max-width: 800px;
       margin: 0 auto 20px;
       background: rgba(255,255,255,0.6);
-      color: #00008B; /* Màu chữ xanh đậm */
+      color: #00008B;  /* Màu chữ xanh đậm cho toàn bộ nội dung trong khung */
     }
     
     /* TIMER: hiển thị "Time:" với khung, in đậm, phóng to */
     #timerDisplay {
-      font-size: 2rem; /* tăng kích thước chữ */
+      font-size: 2rem;
       font-weight: bold;
       color: red;
       margin: 15px auto;
@@ -83,7 +81,8 @@
     h1 {
       font-size: 2rem;
       animation: pulse 2s infinite;
-      color: #fff; /* Tiêu đề Start: SECRET WINDOW màu trắng */
+      /* Đổi tiêu đề Start sang màu xanh đậm */
+      color: #00008B;
     }
     h2 {
       font-size: 1.8rem;
@@ -111,7 +110,7 @@
       cursor: not-allowed;
     }
     
-    /* VÙNG CHỨA ẢNH: CSS Grid hiển thị 3 ảnh trên 1 hàng */
+    /* VÙNG CHỨA ẢNH: dùng CSS Grid hiển thị 3 ảnh trên 1 hàng */
     #imageWrapper {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -122,7 +121,7 @@
       margin: 20px auto;
     }
     
-    /* Mỗi mục: số thứ tự và container ảnh */
+    /* Mỗi mục gồm số thứ tự và container ảnh */
     .image-item {
       display: flex;
       flex-direction: column;
@@ -145,7 +144,7 @@
       animation: bounce 1s;
     }
     
-    /* Container ảnh: sử dụng ảnh "pic.png" làm viền */
+    /* Container ảnh: sử dụng "pic.png" làm viền */
     .image-container {
       position: relative;
       width: 100%;
