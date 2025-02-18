@@ -48,7 +48,15 @@
       color: #0a74da;
     }
     
-    /* TIMER: hiển thị "Time: 00:06" với khung và in đậm */
+    /* Đổi màu tiêu đề để nổi bật */
+    #startScreen h1 {
+      color: #ff4500; /* màu cam đỏ */
+    }
+    #gameScreen h2 {
+      color: #ff4500; /* màu cam đỏ */
+    }
+    
+    /* TIMER: hiển thị "Time:" với khung, in đậm */
     #timerDisplay {
       font-size: 1.3rem;
       font-weight: bold;
@@ -84,7 +92,7 @@
       font-size: 1.8rem;
     }
     
-    /* NÚT chung */
+    /* NÚT */
     .btn {
       padding: 12px 24px;
       margin: 10px;
@@ -105,7 +113,7 @@
       cursor: not-allowed;
     }
     
-    /* VÙNG CHỨA ẢNH: sử dụng CSS Grid hiển thị 3 ảnh trên 1 hàng */
+    /* VÙNG CHỨA ẢNH: dùng CSS Grid hiển thị 3 ảnh trên 1 hàng */
     #imageWrapper {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -116,7 +124,7 @@
       margin: 20px auto;
     }
     
-    /* Mỗi mục: số thứ tự và container ảnh */
+    /* Mỗi mục gồm số thứ tự và container ảnh */
     .image-item {
       display: flex;
       flex-direction: column;
@@ -139,7 +147,7 @@
       animation: bounce 1s;
     }
     
-    /* Container ảnh: tăng 50% so với gốc (700×440px → 1050×660px), sau đó tăng thêm 30% nữa (tổng khoảng 1365×858px) */
+    /* Container ảnh: tăng 50% so với gốc (700×440px → 1050×660px), sau đó tăng thêm 30% nữa (khoảng 1365×858px) */
     .image-container {
       position: relative;
       width: 100%;
@@ -224,7 +232,7 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
     
-    /* Modal TUTORIAL: hiển thị ở giữa màn hình khi được kích, khi ẩn thì không chiếm vị trí */
+    /* Modal TUTORIAL: xuất hiện ở giữa màn hình khi được kích, không chiếm vị trí khi ẩn */
     #tutorialModal {
       position: fixed;
       top: 50%;
@@ -241,8 +249,10 @@
       pointer-events: none;
       transition: all 0.5s ease;
       box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      display: none;
     }
     #tutorialModal.show {
+      display: block;
       opacity: 1;
       transform: translate(-50%, -50%) scale(1);
       pointer-events: auto;
@@ -424,7 +434,7 @@
     function startGame() {
       score = 0;
       currentQuestionIndex = 0;
-      // Khi nhấn Start, chơi nhạc "music.mp3"
+      // Khi nhấn Start, chạy nhạc "music.mp3"
       const musicAudio = new Audio('music.mp3');
       musicAudio.play().catch(err => console.log("Music autoplay bị chặn:", err));
       showScreen("game");
@@ -502,8 +512,7 @@
         imageWrapper.appendChild(item);
       });
     
-      // Bắt đầu đếm ngược
-      // Khi đếm, phát nhạc "tiktak.mp3"
+      // Khi bắt đầu đếm ngược, phát nhạc tiktak
       tiktakAudio.play().catch(err => console.log("Tiktak autoplay bị chặn:", err));
       timerInterval = setInterval(() => {
         remainingTime--;
@@ -529,8 +538,6 @@
     }
     
     function updateTimerDisplay() {
-      // Hiển thị "Time: 00:06" khi bắt đầu, và đếm ngược
-      // Ở đây hiển thị dạng "Time: {remainingTime}s"
       timerDisplay.textContent = `Time: ${remainingTime < 10 ? "0" + remainingTime : remainingTime}s`;
     }
     
@@ -568,7 +575,7 @@
       showScreen("start");
     });
     
-    // Xử lý modal TUTORIAL: bảng thông báo xuất hiện ở giữa màn hình Game (bên dưới nút Next)
+    // Xử lý modal TUTORIAL: Bảng Tutorial sẽ xuất hiện ở giữa màn hình khi nhấn nút, và ẩn đi sẽ hoàn toàn ra khỏi giao diện.
     tutorialBtn.addEventListener("click", () => {
       tutorialModal.classList.add("show");
     });
