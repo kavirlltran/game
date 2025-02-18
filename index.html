@@ -5,13 +5,13 @@
   <title>SECRET WINDOW</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* Import font iCiel_Borsok */
+    /* Import font iCiel_Borsok nếu cần */
     @font-face {
       font-family: 'iCiel_Borsok';
       src: url('iCiel_Borsok.otf') format('opentype');
     }
     
-    /* Áp dụng font và in đậm cho toàn bộ nội dung */
+    /* Áp dụng font chữ và in đậm cho toàn bộ nội dung */
     body {
       font-family: 'iCiel_Borsok', sans-serif;
       font-weight: bold;
@@ -38,7 +38,7 @@
       display: none;
     }
     
-    /* KHUNG CHỮ – sử dụng ảnh "text.png" làm viền */
+    /* KHUNG CHỮ – sử dụng ảnh "text.png" làm viền, nội dung chữ đổi sang màu xanh đậm */
     .text-container {
       border: 10px solid transparent;
       border-image: url('text.png') 30 stretch;
@@ -47,11 +47,10 @@
       max-width: 800px;
       margin: 0 auto 20px;
       background: rgba(255,255,255,0.6);
-      /* Đổi màu chữ trong khung này sang trắng */
-      color: #fff;
+      color: #00008B;  /* Màu xanh đậm */
     }
     
-    /* TIMER: hiển thị "Time:" với khung, in đậm */
+    /* TIMER */
     #timerDisplay {
       font-size: 1.3rem;
       font-weight: bold;
@@ -82,8 +81,7 @@
     h1 {
       font-size: 2rem;
       animation: pulse 2s infinite;
-      /* Đổi màu tiêu đề Start sang trắng */
-      color: #fff;
+      color: #00008B; /* Đổi tiêu đề Start sang màu xanh đậm */
     }
     h2 {
       font-size: 1.8rem;
@@ -111,7 +109,7 @@
       cursor: not-allowed;
     }
     
-    /* VÙNG CHỨA ẢNH: dùng CSS Grid hiển thị 3 ảnh trên 1 hàng */
+    /* VÙNG CHỨA ẢNH: CSS Grid hiển thị 3 ảnh trên 1 hàng */
     #imageWrapper {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -145,7 +143,7 @@
       animation: bounce 1s;
     }
     
-    /* Container ảnh: sử dụng ảnh "pic.png" làm viền */
+    /* Container ảnh: sử dụng "pic.png" làm viền */
     .image-container {
       position: relative;
       width: 100%;
@@ -263,7 +261,7 @@
       text-align: left;
       line-height: 1.5;
       margin-bottom: 20px;
-      color: #fff;  /* Đổi màu hướng dẫn modal sang trắng để dễ đọc trên nền tối */
+      color: #000;  /* Đổi màu hướng dẫn modal sang đen */
     }
     #closeTutorial {
       position: absolute;
