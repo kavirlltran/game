@@ -415,7 +415,7 @@
     
     let currentQuestionIndex = 0;
     let score = 0;
-    const viewTime = 6; // 6 giây xem ảnh
+    const viewTime = 6; // 6 giây xem ảnh ban đầu
     let remainingTime = viewTime;
     let timerInterval = null;
     let answerSelected = false;
@@ -449,7 +449,7 @@
     function startGame() {
       score = 0;
       currentQuestionIndex = 0;
-      userAnswers = []; // reset mảng lưu đáp án khi bắt đầu game mới
+      userAnswers = []; // Reset mảng lưu đáp án khi bắt đầu game mới
       
       // Phát nhạc nền
       const musicAudio = new Audio('music.mp3');
@@ -541,7 +541,6 @@
           if (!canSelect) return;
           cover.classList.remove("show");
     
-          // Nếu người dùng chọn đáp án đúng
           if (imgSrc === q.correct) {
             answerSelected = true;
             checkmark.style.display = "block";
@@ -569,13 +568,18 @@
         imageWrapper.appendChild(item);
       });
       
-      // Nếu đã có đáp án lưu thì hiển thị kết quả ngay, không cần đếm ngược
+      // Nếu đã có đáp án lưu cho câu hỏi này, bỏ qua đếm ngược
       if (savedAnswer) {
-        showAllCovers();
+        // Đảm bảo các ảnh không bị che (remove class "show")
+        document.querySelectorAll(".cover").forEach(cover => {
+          cover.classList.remove("show");
+        });
+        remainingTime = 0;
+        updateTimerDisplay();
         canSelect = true;
         questionTitle.textContent = `Question ${currentQuestionIndex + 1}: ${q.word}`;
       } else {
-        // Đợi 1 giây rồi bắt đầu đếm ngược và phát nhạc "tiktak.mp3"
+        // Nếu chưa có đáp án lưu, bắt đầu đếm ngược và phát nhạc tiktak
         setTimeout(() => {
           tiktakAudio.play().catch(err => console.log("Tiktak autoplay bị chặn:", err));
           timerInterval = setInterval(() => {
@@ -585,6 +589,7 @@
               clearInterval(timerInterval);
               tiktakAudio.pause();
               tiktakAudio.currentTime = 0;
+              // Khi thời gian hết, che ảnh lại
               showAllCovers();
               canSelect = true;
               questionTitle.textContent = `Question ${currentQuestionIndex + 1}: ${q.word}`;
