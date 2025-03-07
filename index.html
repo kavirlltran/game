@@ -477,6 +477,14 @@
       }, 1000);
     }
     
+    // Hàm mở tất cả các đáp án (loại bỏ lớp che của tất cả các container)
+    function revealAllOptions() {
+      const covers = document.querySelectorAll(".cover");
+      covers.forEach(cover => {
+        cover.classList.remove("show");
+      });
+    }
+    
     function loadQuestion() {
       clearInterval(timerInterval);
       imageWrapper.innerHTML = "";
@@ -547,11 +555,14 @@
           if (userAnswers[currentQuestionIndex]) return;
     
           if (imgSrc === q.correct) {
-            // Nếu đáp án đúng: hiển thị dấu tích, ghi điểm, lưu đáp án, khóa chọn
+            // Nếu đáp án đúng: phát âm thanh true.mp3, hiển thị dấu tích, ghi điểm, lưu đáp án, khóa chọn
+            audioCorrect.play();
             checkmark.style.display = "block";
             score++;
             answerSelected = true;
             userAnswers[currentQuestionIndex] = imgSrc;
+            // Mở tất cả các đáp án (loại bỏ lớp che của tất cả các ảnh)
+            revealAllOptions();
             disableAllClicks();
             nextBtn.disabled = false;
           } else {
@@ -560,6 +571,7 @@
             audioWrong.play();
             setTimeout(() => {
               wrongmark.style.display = "none";
+              cover.classList.add("show");
             }, 1000);
             // Không lưu đáp án sai để cho phép chọn lại đáp án đúng
           }
@@ -576,9 +588,7 @@
       
       // Nếu câu hỏi đã được trả lời đúng, hiển thị flashcard ngay và timer = 00:00
       if (savedAnswer) {
-        document.querySelectorAll(".cover").forEach(cover => {
-          cover.classList.remove("show");
-        });
+        revealAllOptions();
         remainingTime = 0;
         updateTimerDisplay();
         canSelect = true;
