@@ -202,6 +202,11 @@
       transform: scaleY(1);
     }
     
+    /* Hiệu ứng mờ cho ảnh đã được chọn */
+    .faded {
+      opacity: 0.5;
+    }
+    
     /* Dấu tích/dấu X */
     .checkmark, .wrongmark {
       position: absolute;
@@ -332,7 +337,8 @@
       <h1>SECRET WINDOW</h1>
       <p>
         B1: Nhấn <span style="font-weight: bold; border: 2px solid #0077cc; padding: 5px 10px; border-radius: 4px;">Start</span> để vào game;<br>
-        B2: Học sinh sẽ quan sát hình ảnh được mở ra từ ô cửa trong khoảng thời gian đã chọn, sau đó ô cửa đóng lại và hiển thị flashcard từ vựng/âm thanh. Nhiệm vụ của học sinh là ghi nhớ đúng từ đó nằm trong ô cửa nào và đập tay vào đúng ô cửa đó.
+        B2: Học sinh sẽ quan sát hình ảnh được mở ra từ ô cửa trong khoảng thời gian đã chọn, 
+        sau đó ô cửa đóng lại và hiển thị flashcard từ vựng/âm thanh. Nhiệm vụ của học sinh là ghi nhớ đúng từ đó nằm trong ô cửa nào và đập tay vào đúng ô cửa đó.
       </p>
     </div>
     <button class="btn" id="startBtn">Start</button>
@@ -403,9 +409,9 @@
       }
     ];
     
-    // Mảng lưu đáp án của từng câu (theo chỉ số câu hỏi)
+    // Mảng lưu đáp án của từng câu (chỉ lưu khi chọn đúng)
     let userAnswers = [];
-    // Mảng lưu thứ tự ảnh của từng câu (để khi back lại thứ tự không thay đổi)
+    // Mảng lưu thứ tự ảnh của từng câu (giữ nguyên thứ tự khi back lại)
     let imageOrders = [];
     
     let currentQuestionIndex = 0;
@@ -451,7 +457,7 @@
       const musicAudio = new Audio('music.mp3');
       musicAudio.play().catch(err => console.log("Music autoplay bị chặn:", err));
       
-      // Hiển thị loading screen đơn giản trong 1 giây
+      // Hiển thị loading screen trong 1 giây
       showScreen("game");
       const loadingOverlay = document.createElement("div");
       loadingOverlay.id = "loadingOverlay";
@@ -484,7 +490,7 @@
       canSelect = false;
       nextBtn.disabled = true;
       
-      // Nút Back bị vô hiệu nếu là câu đầu tiên
+      // Nếu câu hỏi hiện tại là câu đầu tiên thì nút Back bị vô hiệu
       backBtn.disabled = currentQuestionIndex === 0;
       
       // Hiển thị tiêu đề ban đầu của câu hỏi
@@ -492,7 +498,7 @@
       
       const q = questions[currentQuestionIndex];
       
-      // Lấy thứ tự ảnh đã lưu nếu có; nếu chưa có thì tạo mới và lưu
+      // Lấy thứ tự ảnh đã lưu nếu có, nếu chưa tạo mới và lưu
       let allImages;
       if (imageOrders[currentQuestionIndex]) {
         allImages = imageOrders[currentQuestionIndex];
@@ -502,7 +508,7 @@
         imageOrders[currentQuestionIndex] = allImages;
       }
       
-      // Kiểm tra đáp án đã lưu cho câu hỏi này (nếu có)
+      // Kiểm tra đáp án đã lưu (chỉ lưu khi đúng)
       let savedAnswer = userAnswers[currentQuestionIndex];
       
       allImages.forEach((imgSrc, index) => {
@@ -531,40 +537,37 @@
         wrongmark.className = "wrongmark";
         wrongmark.textContent = "✗";
     
-        // Nếu có đáp án đã lưu cho câu hỏi này thì hiển thị trạng thái và khóa chọn
+        // Nếu câu hỏi đã được trả lời đúng, hiển thị trạng thái và khóa lựa chọn
         if (savedAnswer && savedAnswer === imgSrc) {
-          if (imgSrc === q.correct) {
-            checkmark.style.display = "block";
-          } else {
-            wrongmark.style.display = "block";
-          }
+          checkmark.style.display = "block";
+          container.classList.add("faded");
           container.style.pointerEvents = "none";
         }
     
         container.addEventListener("click", () => {
-          // Nếu không được phép chọn (do timer chưa hết hoặc đã trả lời) thì không xử lý
           if (!canSelect) return;
-          
-          // Nếu đã có đáp án (trước đó) thì không cho thay đổi
-          if (userAnswers[currentQuestionIndex]) return;
+          // Nếu container đã được chọn (mờ) thì không cho click lại
+          if (container.classList.contains("faded")) return;
     
-          cover.classList.remove("show");
+          // Khi click vào ảnh, thêm hiệu ứng mờ
+          container.classList.add("faded");
     
           if (imgSrc === q.correct) {
-            answerSelected = true;
+            // Nếu đáp án đúng: hiển thị dấu tích, ghi điểm, khóa chọn
             checkmark.style.display = "block";
             score++;
-            userAnswers[currentQuestionIndex] = imgSrc; // Lưu đáp án
+            answerSelected = true;
+            userAnswers[currentQuestionIndex] = imgSrc;
             disableAllClicks();
             nextBtn.disabled = false;
           } else {
+            // Nếu đáp án sai: hiển thị dấu X, cho phép chọn lại (các ảnh đã click bị mờ không thể chọn lại)
             wrongmark.style.display = "block";
-            userAnswers[currentQuestionIndex] = imgSrc; // Lưu đáp án
             audioWrong.play();
             setTimeout(() => {
               wrongmark.style.display = "none";
-              cover.classList.add("show");
             }, 1000);
+            // Không lưu đáp án sai để cho phép chọn lại đáp án đúng
           }
         });
     
@@ -577,16 +580,14 @@
         imageWrapper.appendChild(item);
       });
       
-      // Nếu câu hỏi đã được trả lời thì:
+      // Nếu câu hỏi đã được trả lời đúng, hiển thị flashcard ngay và timer = 00:00
       if (savedAnswer) {
-        // Loại bỏ lớp che cho tất cả các ảnh (để các ảnh không bị che)
         document.querySelectorAll(".cover").forEach(cover => {
           cover.classList.remove("show");
         });
         remainingTime = 0;
         updateTimerDisplay();
         canSelect = true;
-        // Hiển thị flashcard (từ) ngay
         questionTitle.textContent = `Question ${currentQuestionIndex + 1}: ${q.word}`;
         nextBtn.disabled = false;
       } else {
@@ -608,6 +609,8 @@
           }, 1000);
         }, 1000);
       }
+      // Cho phép chọn đáp án khi timer bắt đầu chạy
+      canSelect = true;
     }
     
     function showAllCovers() {
@@ -636,7 +639,7 @@
     }
     
     nextBtn.addEventListener("click", () => {
-      // Nếu câu hỏi chưa được trả lời, không cho chuyển tiếp
+      // Chỉ chuyển câu hỏi khi đáp án đúng đã được chọn
       if (!userAnswers[currentQuestionIndex]) return;
       currentQuestionIndex++;
       if (currentQuestionIndex < questions.length) {
