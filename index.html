@@ -477,14 +477,6 @@
       }, 1000);
     }
     
-    // Hàm mở tất cả các đáp án (loại bỏ lớp che của tất cả các container)
-    function revealAllOptions() {
-      const covers = document.querySelectorAll(".cover");
-      covers.forEach(cover => {
-        cover.classList.remove("show");
-      });
-    }
-    
     function loadQuestion() {
       clearInterval(timerInterval);
       imageWrapper.innerHTML = "";
@@ -548,29 +540,26 @@
     
         container.addEventListener("click", () => {
           if (!canSelect) return;
-          // Khi click vào ảnh, ngay lập tức ẩn lớp che để hiện đáp án
+          // Khi click vào ảnh, ẩn đi lớp che để hiện đáp án
           cover.classList.remove("show");
     
           // Nếu đáp án đã được lưu (đã trả lời đúng) thì không cho thay đổi
           if (userAnswers[currentQuestionIndex]) return;
     
           if (imgSrc === q.correct) {
-            // Nếu đáp án đúng: hiển thị dấu tích, ghi điểm, lưu đáp án
+            // Nếu đáp án đúng: hiển thị dấu tích, ghi điểm, lưu đáp án, khóa chọn
             checkmark.style.display = "block";
             score++;
             answerSelected = true;
             userAnswers[currentQuestionIndex] = imgSrc;
-            // Mở tất cả các đáp án (loại bỏ lớp che của tất cả các ảnh)
-            revealAllOptions();
             disableAllClicks();
             nextBtn.disabled = false;
           } else {
-            // Nếu đáp án sai: hiển thị dấu X và sau 1 giây tự động che lại đáp án đó
+            // Nếu đáp án sai: hiển thị dấu X, cho phép chọn lại
             wrongmark.style.display = "block";
             audioWrong.play();
             setTimeout(() => {
               wrongmark.style.display = "none";
-              cover.classList.add("show");
             }, 1000);
             // Không lưu đáp án sai để cho phép chọn lại đáp án đúng
           }
@@ -587,7 +576,9 @@
       
       // Nếu câu hỏi đã được trả lời đúng, hiển thị flashcard ngay và timer = 00:00
       if (savedAnswer) {
-        revealAllOptions();
+        document.querySelectorAll(".cover").forEach(cover => {
+          cover.classList.remove("show");
+        });
         remainingTime = 0;
         updateTimerDisplay();
         canSelect = true;
@@ -605,7 +596,6 @@
               tiktakAudio.pause();
               tiktakAudio.currentTime = 0;
               // Khi hết thời gian, hiển thị lớp che lên các ảnh
-              // (nếu người chơi chưa chọn đáp án đúng)
               showAllCovers();
               canSelect = true;
               questionTitle.textContent = `Question ${currentQuestionIndex + 1}: ${q.word}`;
