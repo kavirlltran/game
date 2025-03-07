@@ -318,7 +318,7 @@
   </style>
 </head>
 <body>
-  <!-- Nhạc nền tự động chạy -->
+  <!-- Nhạc nền tự động chạy (không phát nhạc khi nhấn Start) -->
   <audio id="bgMusic" src="music.mp3" loop></audio>
   <!-- Audio tiktak -->
   <audio id="tiktakAudio" src="tiktak.mp3"></audio>
@@ -448,9 +448,7 @@
       userAnswers = [];       // reset khi bắt đầu mới
       imageOrders = [];       // reset thứ tự ảnh khi game mới
       
-      // Phát nhạc nền
-      const musicAudio = new Audio('music.mp3');
-      musicAudio.play().catch(err => console.log("Music autoplay bị chặn:", err));
+      // Lưu ý: không phát nhạc khi nhấn nút Start
       
       // Hiển thị loading screen trong 1 giây
       showScreen("game");
@@ -475,14 +473,6 @@
         document.body.removeChild(loadingOverlay);
         loadQuestion();
       }, 1000);
-    }
-    
-    // Hàm mở tất cả các đáp án (loại bỏ lớp che của tất cả các container)
-    function revealAllOptions() {
-      const covers = document.querySelectorAll(".cover");
-      covers.forEach(cover => {
-        cover.classList.remove("show");
-      });
     }
     
     function loadQuestion() {
@@ -548,32 +538,31 @@
     
         container.addEventListener("click", () => {
           if (!canSelect) return;
-          // Khi click vào ảnh, ẩn đi lớp che để hiện đáp án
+          // Khi click vào ảnh, ẩn lớp che của container đó để hiện đáp án
           cover.classList.remove("show");
     
-          // Nếu đáp án đã được lưu (đã trả lời đúng) thì không cho thay đổi
+          // Nếu đã có đáp án được lưu (đã trả lời đúng) thì không cho thay đổi
           if (userAnswers[currentQuestionIndex]) return;
     
           if (imgSrc === q.correct) {
-            // Nếu đáp án đúng: phát âm thanh true.mp3, hiển thị dấu tích, ghi điểm, lưu đáp án, khóa chọn
+            // Nếu đáp án đúng: phát âm thanh true.mp3, hiển thị dấu tích, ghi điểm, lưu đáp án
             audioCorrect.play();
             checkmark.style.display = "block";
             score++;
             answerSelected = true;
             userAnswers[currentQuestionIndex] = imgSrc;
-            // Mở tất cả các đáp án (loại bỏ lớp che của tất cả các ảnh)
-            revealAllOptions();
-            disableAllClicks();
+            // Chỉ mở container được chọn, không lật hết các ảnh khác
+            container.style.pointerEvents = "none";
             nextBtn.disabled = false;
           } else {
-            // Nếu đáp án sai: hiển thị dấu X, cho phép chọn lại
+            // Nếu đáp án sai: hiển thị dấu X, phát âm thanh failed.mp3, và sau 1 giây tự động che lại ảnh đó
             wrongmark.style.display = "block";
             audioWrong.play();
             setTimeout(() => {
               wrongmark.style.display = "none";
               cover.classList.add("show");
             }, 1000);
-            // Không lưu đáp án sai để cho phép chọn lại đáp án đúng
+            // Không lưu đáp án sai để cho phép người chơi chọn lại đáp án đúng
           }
         });
     
@@ -586,9 +575,11 @@
         imageWrapper.appendChild(item);
       });
       
-      // Nếu câu hỏi đã được trả lời đúng, hiển thị flashcard ngay và timer = 00:00
+      // Nếu câu hỏi đã được trả lời đúng, hiển thị flashcard ngay và đặt timer = 00:00
       if (savedAnswer) {
-        revealAllOptions();
+        document.querySelectorAll(".cover").forEach(cover => {
+          cover.classList.remove("show");
+        });
         remainingTime = 0;
         updateTimerDisplay();
         canSelect = true;
@@ -605,7 +596,7 @@
               clearInterval(timerInterval);
               tiktakAudio.pause();
               tiktakAudio.currentTime = 0;
-              // Khi hết thời gian, hiển thị lớp che lên các ảnh
+              // Khi hết thời gian, hiển thị lớp che lên các ảnh (chỉ nếu chưa chọn đáp án đúng)
               showAllCovers();
               canSelect = true;
               questionTitle.textContent = `Question ${currentQuestionIndex + 1}: ${q.word}`;
@@ -626,13 +617,6 @@
     
     function updateTimerDisplay() {
       timerDisplay.textContent = `Time: ${remainingTime < 10 ? "0" + remainingTime : remainingTime}s`;
-    }
-    
-    function disableAllClicks() {
-      const containers = document.querySelectorAll(".image-container");
-      containers.forEach(c => {
-        c.style.pointerEvents = "none";
-      });
     }
     
     function shuffleArray(array) {
