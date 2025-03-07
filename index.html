@@ -202,11 +202,6 @@
       transform: scaleY(1);
     }
     
-    /* Hiệu ứng mờ cho ảnh đã được chọn */
-    .faded {
-      opacity: 0.5;
-    }
-    
     /* Dấu tích/dấu X */
     .checkmark, .wrongmark {
       position: absolute;
@@ -490,7 +485,7 @@
       canSelect = false;
       nextBtn.disabled = true;
       
-      // Nếu câu hỏi hiện tại là câu đầu tiên thì nút Back bị vô hiệu
+      // Nút Back bị vô hiệu nếu là câu đầu tiên
       backBtn.disabled = currentQuestionIndex === 0;
       
       // Hiển thị tiêu đề ban đầu của câu hỏi
@@ -508,7 +503,7 @@
         imageOrders[currentQuestionIndex] = allImages;
       }
       
-      // Kiểm tra đáp án đã lưu (chỉ lưu khi đúng)
+      // Kiểm tra đáp án đã lưu (chỉ lưu khi chọn đúng)
       let savedAnswer = userAnswers[currentQuestionIndex];
       
       allImages.forEach((imgSrc, index) => {
@@ -540,20 +535,19 @@
         // Nếu câu hỏi đã được trả lời đúng, hiển thị trạng thái và khóa lựa chọn
         if (savedAnswer && savedAnswer === imgSrc) {
           checkmark.style.display = "block";
-          container.classList.add("faded");
           container.style.pointerEvents = "none";
         }
     
         container.addEventListener("click", () => {
           if (!canSelect) return;
-          // Nếu container đã được chọn (mờ) thì không cho click lại
-          if (container.classList.contains("faded")) return;
+          // Khi click vào ảnh, ẩn đi lớp che để hiện đáp án
+          cover.classList.remove("show");
     
-          // Khi click vào ảnh, thêm hiệu ứng mờ
-          container.classList.add("faded");
+          // Nếu đáp án đã được lưu (đã trả lời đúng) thì không cho thay đổi
+          if (userAnswers[currentQuestionIndex]) return;
     
           if (imgSrc === q.correct) {
-            // Nếu đáp án đúng: hiển thị dấu tích, ghi điểm, khóa chọn
+            // Nếu đáp án đúng: hiển thị dấu tích, ghi điểm, lưu đáp án, khóa chọn
             checkmark.style.display = "block";
             score++;
             answerSelected = true;
@@ -561,7 +555,7 @@
             disableAllClicks();
             nextBtn.disabled = false;
           } else {
-            // Nếu đáp án sai: hiển thị dấu X, cho phép chọn lại (các ảnh đã click bị mờ không thể chọn lại)
+            // Nếu đáp án sai: hiển thị dấu X, cho phép chọn lại
             wrongmark.style.display = "block";
             audioWrong.play();
             setTimeout(() => {
@@ -601,7 +595,7 @@
               clearInterval(timerInterval);
               tiktakAudio.pause();
               tiktakAudio.currentTime = 0;
-              // Khi hết thời gian, che ảnh lại
+              // Khi hết thời gian, hiển thị lớp che lên các ảnh
               showAllCovers();
               canSelect = true;
               questionTitle.textContent = `Question ${currentQuestionIndex + 1}: ${q.word}`;
