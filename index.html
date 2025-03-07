@@ -67,7 +67,7 @@
       color: #00008B;
     }
     
-    /* TIMER: hiển thị "Time:" với khung, in đậm, phóng to */
+    /* TIMER */
     #timerDisplay {
       font-size: 2rem;
       font-weight: bold;
@@ -126,7 +126,7 @@
       cursor: not-allowed;
     }
     
-    /* VÙNG CHỨA ẢNH: CSS Grid hiển thị 3 ảnh trên 1 hàng */
+    /* VÙNG CHỨA ẢNH */
     #imageWrapper {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -137,7 +137,6 @@
       margin: 20px auto;
     }
     
-    /* Mỗi mục: số thứ tự và container ảnh */
     .image-item {
       display: flex;
       flex-direction: column;
@@ -148,7 +147,6 @@
       border-radius: 10px;
     }
     
-    /* Số thứ tự */
     .number-label {
       background: #ff9800;
       color: #fff;
@@ -160,7 +158,7 @@
       animation: bounce 1s;
     }
     
-    /* Container ảnh: sử dụng ảnh "pic.png" làm viền */
+    /* Container ảnh sử dụng ảnh "pic.png" làm viền */
     .image-container {
       position: relative;
       width: 100%;
@@ -204,7 +202,7 @@
       transform: scaleY(1);
     }
     
-    /* Dấu tích / dấu X */
+    /* Dấu tích/dấu X */
     .checkmark, .wrongmark {
       position: absolute;
       top: 50%;
@@ -219,13 +217,13 @@
     .checkmark { color: green; }
     .wrongmark { color: red; }
     
-    /* Nút "Next" và "Back" */
+    /* Nút Next và Back */
     #backBtn, #nextBtn {
       margin-top: 20px;
       animation: fadeIn 1s ease-out;
     }
     
-    /* Nút TUTORIAL: chuyển sang màu vàng, đặt gần góc dưới bên trái */
+    /* Nút TUTORIAL */
     #tutorialBtn {
       position: fixed;
       bottom: 20px;
@@ -245,7 +243,7 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
     
-    /* Modal TUTORIAL: xuất hiện ở giữa màn hình khi được kích, nằm bên dưới nút Next */
+    /* Modal TUTORIAL */
     #tutorialModal {
       position: fixed;
       top: 50%;
@@ -306,7 +304,7 @@
       100% { transform: scale(1); }
     }
     
-    /* Responsive: trên điện thoại, bố trí theo hàng dọc */
+    /* Responsive */
     @media (max-width: 768px) {
       #imageWrapper {
         grid-template-columns: 1fr;
@@ -322,7 +320,7 @@
 <body>
   <!-- Nhạc nền tự động chạy -->
   <audio id="bgMusic" src="music.mp3" loop></audio>
-  <!-- Audio tiktak: chạy cùng đếm thời gian -->
+  <!-- Audio tiktak -->
   <audio id="tiktakAudio" src="tiktak.mp3"></audio>
   
   <!-- Nút TUTORIAL -->
@@ -334,9 +332,7 @@
       <h1>SECRET WINDOW</h1>
       <p>
         B1: Nhấn <span style="font-weight: bold; border: 2px solid #0077cc; padding: 5px 10px; border-radius: 4px;">Start</span> để vào game;<br>
-        B2: Học sinh sẽ quan sát hình ảnh được mở ra từ ô cửa trong khoảng thời gian đã chọn, 
-        sau đó ô cửa đóng lại và hiển thị flashcard từ vựng/âm thanh của từ vựng. 
-        Nhiệm vụ của học sinh là ghi nhớ đúng từ đó nằm trong ô cửa nào và đập tay vào đúng ô cửa đó.
+        B2: Học sinh sẽ quan sát hình ảnh được mở ra từ ô cửa trong khoảng thời gian đã chọn, sau đó ô cửa đóng lại và hiển thị flashcard từ vựng/âm thanh. Nhiệm vụ của học sinh là ghi nhớ đúng từ đó nằm trong ô cửa nào và đập tay vào đúng ô cửa đó.
       </p>
     </div>
     <button class="btn" id="startBtn">Start</button>
@@ -345,7 +341,6 @@
   <!-- Màn hình Game -->
   <div id="gameScreen" class="screen">
     <div class="text-container">
-      <!-- Ban đầu chỉ hiển thị "Question 1" -->
       <h2 id="questionTitle">Question 1</h2>
     </div>
     <div id="timerDisplay">Time: 00:06</div>
@@ -359,9 +354,7 @@
       <h3>TUTORIAL</h3>
       <p>
         B1: Nhấn <strong style="border: 2px solid #0077cc; padding: 5px 10px; border-radius: 4px;">Start</strong> để vào game.<br>
-        B2: Học sinh sẽ quan sát hình ảnh được mở ra từ ô cửa trong khoảng thời gian đã chọn. 
-        Sau khi thời gian kết thúc, ô cửa sẽ đóng lại và hiển thị flashcard từ vựng/âm thanh của từ vựng. 
-        Nhiệm vụ của học sinh là ghi nhớ đúng từ đó nằm trong ô cửa nào và đập tay vào đúng ô cửa đó.
+        B2: Học sinh sẽ quan sát hình ảnh được mở ra từ ô cửa trong khoảng thời gian đã chọn. Sau khi thời gian kết thúc, ô cửa đóng lại và hiển thị flashcard từ vựng/âm thanh. Nhiệm vụ của học sinh là ghi nhớ đúng từ đó nằm trong ô cửa nào và đập tay vào đúng ô cửa đó.
       </p>
     </div>
   </div>
@@ -410,8 +403,10 @@
       }
     ];
     
-    // Mảng lưu đáp án của từng câu (mỗi phần tử ứng với đáp án đã chọn của câu tương ứng)
+    // Mảng lưu đáp án của từng câu (theo chỉ số câu hỏi)
     let userAnswers = [];
+    // Mảng lưu thứ tự ảnh của từng câu (để khi back lại thứ tự không thay đổi)
+    let imageOrders = [];
     
     let currentQuestionIndex = 0;
     let score = 0;
@@ -449,7 +444,8 @@
     function startGame() {
       score = 0;
       currentQuestionIndex = 0;
-      userAnswers = []; // Reset mảng lưu đáp án khi bắt đầu game mới
+      userAnswers = [];       // reset khi bắt đầu mới
+      imageOrders = [];       // reset thứ tự ảnh khi game mới
       
       // Phát nhạc nền
       const musicAudio = new Audio('music.mp3');
@@ -488,15 +484,23 @@
       canSelect = false;
       nextBtn.disabled = true;
       
-      // Nếu câu hỏi hiện tại là câu đầu tiên thì nút Back bị vô hiệu
+      // Nút Back bị vô hiệu nếu là câu đầu tiên
       backBtn.disabled = currentQuestionIndex === 0;
       
-      // Hiển thị tiêu đề câu hỏi ban đầu
+      // Hiển thị tiêu đề ban đầu của câu hỏi
       questionTitle.textContent = `Question ${currentQuestionIndex + 1}`;
       
       const q = questions[currentQuestionIndex];
-      const allImages = [q.correct, ...q.distractors];
-      shuffleArray(allImages);
+      
+      // Lấy thứ tự ảnh đã lưu nếu có; nếu chưa có thì tạo mới và lưu
+      let allImages;
+      if (imageOrders[currentQuestionIndex]) {
+        allImages = imageOrders[currentQuestionIndex];
+      } else {
+        allImages = [q.correct, ...q.distractors];
+        shuffleArray(allImages);
+        imageOrders[currentQuestionIndex] = allImages;
+      }
       
       // Kiểm tra đáp án đã lưu cho câu hỏi này (nếu có)
       let savedAnswer = userAnswers[currentQuestionIndex];
@@ -527,7 +531,7 @@
         wrongmark.className = "wrongmark";
         wrongmark.textContent = "✗";
     
-        // Nếu đã có đáp án lưu, hiển thị trạng thái đã chọn và vô hiệu hóa lựa chọn
+        // Nếu có đáp án đã lưu cho câu hỏi này thì hiển thị trạng thái và khóa chọn
         if (savedAnswer && savedAnswer === imgSrc) {
           if (imgSrc === q.correct) {
             checkmark.style.display = "block";
@@ -538,7 +542,12 @@
         }
     
         container.addEventListener("click", () => {
+          // Nếu không được phép chọn (do timer chưa hết hoặc đã trả lời) thì không xử lý
           if (!canSelect) return;
+          
+          // Nếu đã có đáp án (trước đó) thì không cho thay đổi
+          if (userAnswers[currentQuestionIndex]) return;
+    
           cover.classList.remove("show");
     
           if (imgSrc === q.correct) {
@@ -568,18 +577,20 @@
         imageWrapper.appendChild(item);
       });
       
-      // Nếu đã có đáp án lưu cho câu hỏi này, bỏ qua đếm ngược
+      // Nếu câu hỏi đã được trả lời thì:
       if (savedAnswer) {
-        // Đảm bảo các ảnh không bị che (remove class "show")
+        // Loại bỏ lớp che cho tất cả các ảnh (để các ảnh không bị che)
         document.querySelectorAll(".cover").forEach(cover => {
           cover.classList.remove("show");
         });
         remainingTime = 0;
         updateTimerDisplay();
         canSelect = true;
+        // Hiển thị flashcard (từ) ngay
         questionTitle.textContent = `Question ${currentQuestionIndex + 1}: ${q.word}`;
+        nextBtn.disabled = false;
       } else {
-        // Nếu chưa có đáp án lưu, bắt đầu đếm ngược và phát nhạc tiktak
+        // Nếu chưa trả lời, bắt đầu đếm ngược và phát nhạc tiktak
         setTimeout(() => {
           tiktakAudio.play().catch(err => console.log("Tiktak autoplay bị chặn:", err));
           timerInterval = setInterval(() => {
@@ -589,7 +600,7 @@
               clearInterval(timerInterval);
               tiktakAudio.pause();
               tiktakAudio.currentTime = 0;
-              // Khi thời gian hết, che ảnh lại
+              // Khi hết thời gian, che ảnh lại
               showAllCovers();
               canSelect = true;
               questionTitle.textContent = `Question ${currentQuestionIndex + 1}: ${q.word}`;
@@ -625,7 +636,8 @@
     }
     
     nextBtn.addEventListener("click", () => {
-      if (!answerSelected) return;
+      // Nếu câu hỏi chưa được trả lời, không cho chuyển tiếp
+      if (!userAnswers[currentQuestionIndex]) return;
       currentQuestionIndex++;
       if (currentQuestionIndex < questions.length) {
         loadQuestion();
