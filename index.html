@@ -219,8 +219,8 @@
     .checkmark { color: green; }
     .wrongmark { color: red; }
     
-    /* Nút "Next" */
-    #nextBtn {
+    /* Nút "Next" và "Back" */
+    #backBtn, #nextBtn {
       margin-top: 20px;
       animation: fadeIn 1s ease-out;
     }
@@ -350,6 +350,8 @@
     </div>
     <div id="timerDisplay">Time: 00:06</div>
     <div id="imageWrapper"></div>
+    <!-- Thêm nút Back cạnh nút Next -->
+    <button class="btn" id="backBtn" disabled>Back</button>
     <button class="btn" id="nextBtn" disabled>Next</button>
     <!-- Modal TUTORIAL: xuất hiện ở giữa màn hình khi được kích -->
     <div id="tutorialModal">
@@ -427,6 +429,7 @@
     const timerDisplay = document.getElementById("timerDisplay");
     const imageWrapper = document.getElementById("imageWrapper");
     const nextBtn = document.getElementById("nextBtn");
+    const backBtn = document.getElementById("backBtn");
     const resultText = document.getElementById("resultText");
     
     const startBtn = document.getElementById("startBtn");
@@ -485,6 +488,9 @@
       canSelect = false;
       nextBtn.disabled = true;
       updateTimerDisplay();
+      
+      // Cập nhật trạng thái cho nút Back: nếu là câu hỏi đầu tiên thì vô hiệu hóa
+      backBtn.disabled = currentQuestionIndex === 0;
       
       // Ban đầu chỉ hiển thị "Question X"
       questionTitle.textContent = `Question ${currentQuestionIndex + 1}`;
@@ -593,6 +599,13 @@
         loadQuestion();
       } else {
         endGame();
+      }
+    });
+    
+    backBtn.addEventListener("click", () => {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        loadQuestion();
       }
     });
     
