@@ -1,646 +1,109 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <title>SECRET WINDOW</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    /* Import font FS PFBeauSansPro-BlackItalic */
-    @font-face {
-      font-family: 'FS PFBeauSansPro';
-      src: url('FS PFBeauSansPro-BlackItalic.ttf') format('truetype');
-    }
-    
-    /* Áp dụng font và in đậm cho toàn bộ nội dung */
-    body {
-      font-family: 'FS PFBeauSansPro', sans-serif;
-      font-weight: bold;
-      background: url('nen xanh.jpg') no-repeat center center fixed;
-      background-size: cover;
-      color: #333;
-      text-align: center;
-      padding: 20px;
-      font-size: 1.3rem;
-      position: relative;
-    }
-    body::after {
-      content: "";
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.15);
-      z-index: -1;
-    }
-    
-    /* Loading Screen */
-    #loadingScreen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      color: #00008B;
-      z-index: 2000;
-      display: none;
-    }
-    
-    /* NHẠC NỀN */
-    audio#bgMusic {
-      display: none;
-    }
-    
-    /* KHUNG CHỮ – sử dụng ảnh "text.png" làm viền */
-    .text-container {
-      border: 10px solid transparent;
-      border-image: url('text.png') 30 stretch;
-      padding: 15px;
-      border-radius: 8px;
-      max-width: 800px;
-      margin: 0 auto 20px;
-      background: rgba(255,255,255,0.6);
-      color: #00008B;  /* Màu chữ xanh đậm */
-    }
-    
-    /* TIMER: hiển thị "Time:" với khung, in đậm, phóng to */
-    #timerDisplay {
-      font-size: 2rem;
-      font-weight: bold;
-      color: red;
-      margin: 15px auto;
-      padding: 8px 12px;
-      border: 2px solid red;
-      border-radius: 4px;
-      width: fit-content;
-      animation: fadeIn 1s ease-out;
-    }
-    
-    /* MÀN HÌNH */
-    .screen {
-      display: none;
-      min-height: 100vh;
-      padding: 20px;
-      animation: fadeIn 1s ease-out;
-    }
-    .active {
-      display: block;
-    }
-    
-    h1, h2, p {
-      max-width: 800px;
-      margin: 10px auto;
-    }
-    h1 {
-      font-size: 2rem;
-      animation: pulse 2s infinite;
-      color: #00008B;
-    }
-    h2 {
-      font-size: 1.8rem;
-      color: #ff4500;
-    }
-    
-    /* NÚT chung */
-    .btn {
-      padding: 12px 24px;
-      margin: 10px;
-      cursor: pointer;
-      background: #0077cc;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      font-size: 1.2rem;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    }
-    .btn:disabled {
-      background: #aaa;
-      cursor: not-allowed;
-    }
-    
-    /* VÙNG CHỨA ẢNH: CSS Grid hiển thị 3 ảnh trên 1 hàng */
-    #imageWrapper {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      padding: 10px;
-      animation: fadeIn 1s ease-out;
-      max-width: 1200px;
-      margin: 20px auto;
-    }
-    
-    /* Mỗi mục: số thứ tự và container ảnh */
-    .image-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: rgba(255,255,255,0.6);
-      border: 2px solid rgba(204,204,204,0.6);
-      padding: 0 30px;
-      border-radius: 10px;
-    }
-    
-    /* Số thứ tự */
-    .number-label {
-      background: #ff9800;
-      color: #fff;
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-weight: bold;
-      font-size: 1.5rem;
-      margin-bottom: 10px;
-      animation: bounce 1s;
-    }
-    
-    /* Container ảnh: sử dụng ảnh "pic.png" làm viền */
-    .image-container {
-      position: relative;
-      width: 100%;
-      max-width: 1365px;
-      aspect-ratio: 1365 / 858;
-      border: 10px solid transparent;
-      border-image: url('pic.png') 30 stretch;
-      border-radius: 10px;
-      overflow: hidden;
-      background: rgba(238,238,238,0.6);
-      cursor: pointer;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-    .image-container:hover {
-      transform: scale(1.02);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-    }
-    .image-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transform: scale(1.3);
-      transform-origin: center center;
-    }
-    
-    /* Lớp che sử dụng ảnh "che.png" */
-    .cover {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: url('che.png') center center / cover no-repeat;
-      transform: scaleY(0);
-      transform-origin: top;
-      transition: transform 0.5s ease;
-      z-index: 5;
-    }
-    .cover.show {
-      transform: scaleY(1);
-    }
-    
-    /* Dấu tích / dấu X */
-    .checkmark, .wrongmark {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 4rem;
-      font-weight: bold;
-      display: none;
-      z-index: 50;
-      animation: fadeIn 0.5s;
-    }
-    .checkmark { color: green; }
-    .wrongmark { color: red; }
-    
-    /* Nút "Next" và "Back" */
-    #backBtn, #nextBtn {
-      margin-top: 20px;
-      animation: fadeIn 1s ease-out;
-    }
-    
-    /* Nút TUTORIAL: chuyển sang màu vàng, đặt gần góc dưới bên trái */
-    #tutorialBtn {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      padding: 16px 28px;
-      background: #ff0;
-      color: #000;
-      border: none;
-      border-radius: 4px;
-      font-size: 1.5rem;
-      cursor: pointer;
-      z-index: 100;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    #tutorialBtn:hover {
-      transform: scale(1.1);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-    
-    /* Modal TUTORIAL: xuất hiện ở giữa màn hình khi được kích, nằm bên dưới nút Next */
-    #tutorialModal {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.8);
-      background: rgba(255, 255, 255, 0.95);
-      border: 3px solid rgba(179,212,252,0.8);
-      border-radius: 8px;
-      max-width: 500px;
-      width: 90%;
-      padding: 20px;
-      z-index: 1000;
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.5s ease;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-      display: none;
-    }
-    #tutorialModal.show {
-      display: block;
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
-      pointer-events: auto;
-    }
-    #tutorialModal h3 {
-      margin-bottom: 10px;
-      color: #0077cc;
-    }
-    #tutorialModal p {
-      text-align: left;
-      line-height: 1.5;
-      margin-bottom: 20px;
-      color: #000;  /* Hướng dẫn modal hiển thị màu đen */
-    }
-    #closeTutorial {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #0077cc;
-      cursor: pointer;
-    }
-    
-    /* KEYFRAMES */
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    @keyframes bounce {
-      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-      40% { transform: translateY(-10px); }
-      60% { transform: translateY(-5px); }
-    }
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-    
-    /* Responsive: trên điện thoại, bố trí theo hàng dọc */
-    @media (max-width: 768px) {
-      #imageWrapper {
-        grid-template-columns: 1fr;
-        gap: 20px;
-      }
-      .image-container {
-        width: 90vw;
-        aspect-ratio: auto;
-      }
-    }
-  </style>
-</head>
-<body>
-  <!-- Nhạc nền tự động chạy -->
-  <audio id="bgMusic" src="music.mp3" loop></audio>
-  <!-- Audio tiktak: chạy cùng đếm thời gian -->
-  <audio id="tiktakAudio" src="tiktak.mp3"></audio>
+let userAnswers = []; // Mảng lưu đáp án của từng câu
+
+function loadQuestion() {
+  clearInterval(timerInterval);
+  imageWrapper.innerHTML = "";
+  remainingTime = viewTime;
+  answerSelected = false;
+  canSelect = false;
+  nextBtn.disabled = true;
   
-  <!-- Nút TUTORIAL -->
-  <button id="tutorialBtn">TUTORIAL</button>
+  // Kiểm tra đáp án đã lưu của câu hỏi hiện tại (nếu có)
+  let savedAnswer = userAnswers[currentQuestionIndex];
   
-  <!-- Màn hình Start -->
-  <div id="startScreen" class="screen active">
-    <div class="text-container">
-      <h1>SECRET WINDOW</h1>
-      <p>
-        B1: Nhấn <span style="font-weight: bold; border: 2px solid #0077cc; padding: 5px 10px; border-radius: 4px;">Start</span> để vào game;<br>
-        B2: Học sinh sẽ quan sát hình ảnh được mở ra từ ô cửa trong khoảng thời gian đã chọn, 
-        sau đó ô cửa đóng lại và hiển thị flashcard từ vựng/âm thanh của từ vựng. 
-        Nhiệm vụ của học sinh là ghi nhớ đúng từ đó nằm trong ô cửa nào và đập tay vào đúng ô cửa đó.
-      </p>
-    </div>
-    <button class="btn" id="startBtn">Start</button>
-  </div>
+  // Cập nhật trạng thái cho nút Back: nếu là câu hỏi đầu tiên thì vô hiệu hóa
+  backBtn.disabled = currentQuestionIndex === 0;
   
-  <!-- Màn hình Game -->
-  <div id="gameScreen" class="screen">
-    <div class="text-container">
-      <!-- Ban đầu chỉ hiển thị "Question 1" -->
-      <h2 id="questionTitle">Question 1</h2>
-    </div>
-    <div id="timerDisplay">Time: 00:06</div>
-    <div id="imageWrapper"></div>
-    <!-- Thêm nút Back cạnh nút Next -->
-    <button class="btn" id="backBtn" disabled>Back</button>
-    <button class="btn" id="nextBtn" disabled>Next</button>
-    <!-- Modal TUTORIAL: xuất hiện ở giữa màn hình khi được kích -->
-    <div id="tutorialModal">
-      <span id="closeTutorial">×</span>
-      <h3>TUTORIAL</h3>
-      <p>
-        B1: Nhấn <strong style="border: 2px solid #0077cc; padding: 5px 10px; border-radius: 4px;">Start</strong> để vào game.<br>
-        B2: Học sinh sẽ quan sát hình ảnh được mở ra từ ô cửa trong khoảng thời gian đã chọn. 
-        Sau khi thời gian kết thúc, ô cửa sẽ đóng lại và hiển thị flashcard từ vựng/âm thanh của từ vựng. 
-        Nhiệm vụ của học sinh là ghi nhớ đúng từ đó nằm trong ô cửa nào và đập tay vào đúng ô cửa đó.
-      </p>
-    </div>
-  </div>
+  // Hiển thị tiêu đề câu hỏi
+  questionTitle.textContent = `Question ${currentQuestionIndex + 1}`;
   
-  <!-- Màn hình End -->
-  <div id="endScreen" class="screen">
-    <div class="text-container">
-      <h1>Game Over</h1>
-      <h2 id="resultText"></h2>
-    </div>
-    <button class="btn" id="replayBtn">Play Again</button>
-  </div>
+  const q = questions[currentQuestionIndex];
+  const allImages = [q.correct, ...q.distractors];
+  shuffleArray(allImages);
   
-  <script>
-    // Khởi tạo âm thanh cho đáp án đúng và sai
-    const audioCorrect = new Audio('true.mp3');
-    const audioWrong = new Audio('failed.mp3');
-    
-    // Tạo audio cho nhạc tiktak
-    const tiktakAudio = document.getElementById('tiktakAudio');
-    
-    // Các câu hỏi
-    const questions = [
-      {
-        word: "face-to-face",
-        correct: "face to face learning.jpg",
-        distractors: ["prepare for.webp", "strategy.webp"]
-      },
-      {
-        word: "prepare",
-        correct: "prepare for.webp",
-        distractors: ["strategy.webp", "online learning.webp"]
-      },
-      {
-        word: "strategy",
-        correct: "strategy.webp",
-        distractors: ["online learning.webp", "blended learning.webp"]
-      },
-      {
-        word: "online learning",
-        correct: "online learning.webp",
-        distractors: ["face to face learning.jpg", "blended learning.webp"]
-      },
-      {
-        word: "blended learning",
-        correct: "blended learning.webp",
-        distractors: ["face to face learning.jpg", "strategy.webp"]
-      }
-    ];
-    
-    let currentQuestionIndex = 0;
-    let score = 0;
-    const viewTime = 6; // 6 giây xem ảnh
-    let remainingTime = viewTime;
-    let timerInterval = null;
-    let answerSelected = false;
-    let canSelect = false;
-    
-    // DOM Elements
-    const startScreen = document.getElementById("startScreen");
-    const gameScreen = document.getElementById("gameScreen");
-    const endScreen = document.getElementById("endScreen");
-    
-    const questionTitle = document.getElementById("questionTitle");
-    const timerDisplay = document.getElementById("timerDisplay");
-    const imageWrapper = document.getElementById("imageWrapper");
-    const nextBtn = document.getElementById("nextBtn");
-    const backBtn = document.getElementById("backBtn");
-    const resultText = document.getElementById("resultText");
-    
-    const startBtn = document.getElementById("startBtn");
-    const replayBtn = document.getElementById("replayBtn");
-    const tutorialBtn = document.getElementById("tutorialBtn");
-    const tutorialModal = document.getElementById("tutorialModal");
-    const closeTutorial = document.getElementById("closeTutorial");
-    
-    function showScreen(screenName) {
-      startScreen.classList.remove("active");
-      gameScreen.classList.remove("active");
-      endScreen.classList.remove("active");
-      if (screenName === "start") startScreen.classList.add("active");
-      else if (screenName === "game") gameScreen.classList.add("active");
-      else if (screenName === "end") endScreen.classList.add("active");
-    }
-    
-    function startGame() {
-      score = 0;
-      currentQuestionIndex = 0;
-      // Khi nhấn Start, chạy nhạc "music.mp3"
-      const musicAudio = new Audio('music.mp3');
-      musicAudio.play().catch(err => console.log("Music autoplay bị chặn:", err));
-      
-      // Hiển thị hiệu ứng loading trong 1 giây trước khi chuyển sang câu hỏi
-      showScreen("game");
-      // Tạo một hiệu ứng loading đơn giản (có thể là một text "Loading..." hoặc spinner)
-      const loadingOverlay = document.createElement("div");
-      loadingOverlay.id = "loadingOverlay";
-      loadingOverlay.style.position = "fixed";
-      loadingOverlay.style.top = "0";
-      loadingOverlay.style.left = "0";
-      loadingOverlay.style.width = "100%";
-      loadingOverlay.style.height = "100%";
-      loadingOverlay.style.background = "rgba(255,255,255,0.8)";
-      loadingOverlay.style.display = "flex";
-      loadingOverlay.style.alignItems = "center";
-      loadingOverlay.style.justifyContent = "center";
-      loadingOverlay.style.fontSize = "2rem";
-      loadingOverlay.style.color = "#00008B";
-      loadingOverlay.style.zIndex = "1500";
-      loadingOverlay.textContent = "Loading...";
-      document.body.appendChild(loadingOverlay);
-      
-      setTimeout(() => {
-        document.body.removeChild(loadingOverlay);
-        loadQuestion(); // Gọi hàm loadQuestion sau 1 giây
-      }, 1000);
-    }
-    
-    function loadQuestion() {
-      clearInterval(timerInterval);
-      imageWrapper.innerHTML = "";
-      remainingTime = viewTime;
-      answerSelected = false;
-      canSelect = false;
-      nextBtn.disabled = true;
-      updateTimerDisplay();
-      
-      // Cập nhật trạng thái cho nút Back: nếu là câu hỏi đầu tiên thì vô hiệu hóa
-      backBtn.disabled = currentQuestionIndex === 0;
-      
-      // Ban đầu chỉ hiển thị "Question X"
-      questionTitle.textContent = `Question ${currentQuestionIndex + 1}`;
-      
-      const q = questions[currentQuestionIndex];
-      const allImages = [q.correct, ...q.distractors];
-      shuffleArray(allImages);
-      
-      allImages.forEach((imgSrc, index) => {
-        const item = document.createElement("div");
-        item.className = "image-item";
-    
-        const label = document.createElement("div");
-        label.className = "number-label";
-        label.textContent = (index + 1).toString();
-    
-        const container = document.createElement("div");
-        container.className = "image-container";
-    
-        const img = document.createElement("img");
-        img.src = imgSrc;
-        img.alt = "option";
-    
-        const cover = document.createElement("div");
-        cover.className = "cover";
-    
-        const checkmark = document.createElement("div");
-        checkmark.className = "checkmark";
-        checkmark.textContent = "✓";
-    
-        const wrongmark = document.createElement("div");
-        wrongmark.className = "wrongmark";
-        wrongmark.textContent = "✗";
-    
-        container.addEventListener("click", () => {
-          if (!canSelect) return;
-          cover.classList.remove("show");
-          if (imgSrc === q.correct) {
-            answerSelected = true;
-            checkmark.style.display = "block";
-            score++;
-            audioCorrect.play();
-            disableAllClicks();
-            nextBtn.disabled = false;
-          } else {
-            wrongmark.style.display = "block";
-            audioWrong.play();
-            setTimeout(() => {
-              wrongmark.style.display = "none";
-              cover.classList.add("show");
-            }, 1000);
-          }
-        });
-    
-        container.appendChild(img);
-        container.appendChild(cover);
-        container.appendChild(checkmark);
-        container.appendChild(wrongmark);
-        item.appendChild(label);
-        item.appendChild(container);
-        imageWrapper.appendChild(item);
-      });
-    
-      // Đợi 1 giây trước khi bắt đầu đếm ngược, sau đó phát nhạc "tiktak.mp3"
-      setTimeout(() => {
-        tiktakAudio.play().catch(err => console.log("Tiktak autoplay bị chặn:", err));
-        timerInterval = setInterval(() => {
-          remainingTime--;
-          updateTimerDisplay();
-          if (remainingTime <= 0) {
-            clearInterval(timerInterval);
-            tiktakAudio.pause();
-            tiktakAudio.currentTime = 0;
-            showAllCovers();
-            canSelect = true;
-            // Sau 6s, cập nhật tiêu đề câu hỏi thành "Question X: [word]"
-            const q = questions[currentQuestionIndex];
-            questionTitle.textContent = `Question ${currentQuestionIndex + 1}: ${q.word}`;
-          }
-        }, 1000);
-      }, 1000);
-    }
-    
-    function showAllCovers() {
-      const covers = document.querySelectorAll(".cover");
-      covers.forEach(cover => {
-        cover.classList.add("show");
-      });
-    }
-    
-    function updateTimerDisplay() {
-      timerDisplay.textContent = `Time: ${remainingTime < 10 ? "0" + remainingTime : remainingTime}s`;
-    }
-    
-    function disableAllClicks() {
-      const containers = document.querySelectorAll(".image-container");
-      containers.forEach(c => {
-        c.style.pointerEvents = "none";
-      });
-    }
-    
-    nextBtn.addEventListener("click", () => {
-      if (!answerSelected) return;
-      currentQuestionIndex++;
-      if (currentQuestionIndex < questions.length) {
-        loadQuestion();
+  allImages.forEach((imgSrc, index) => {
+    const item = document.createElement("div");
+    item.className = "image-item";
+
+    const label = document.createElement("div");
+    label.className = "number-label";
+    label.textContent = (index + 1).toString();
+
+    const container = document.createElement("div");
+    container.className = "image-container";
+
+    const img = document.createElement("img");
+    img.src = imgSrc;
+    img.alt = "option";
+
+    const cover = document.createElement("div");
+    cover.className = "cover";
+
+    const checkmark = document.createElement("div");
+    checkmark.className = "checkmark";
+    checkmark.textContent = "✓";
+
+    const wrongmark = document.createElement("div");
+    wrongmark.className = "wrongmark";
+    wrongmark.textContent = "✗";
+
+    // Nếu đã lưu đáp án cho câu hỏi này, hiển thị trạng thái đã chọn
+    if (savedAnswer && savedAnswer === imgSrc) {
+      if (imgSrc === q.correct) {
+         checkmark.style.display = "block";
       } else {
-        endGame();
+         wrongmark.style.display = "block";
       }
-    });
-    
-    backBtn.addEventListener("click", () => {
-      if (currentQuestionIndex > 0) {
-        currentQuestionIndex--;
-        loadQuestion();
-      }
-    });
-    
-    function endGame() {
-      showScreen("end");
-      resultText.textContent = `You got ${score} out of ${questions.length} correct.`;
+      // Vô hiệu hóa lựa chọn nếu không cho phép thay đổi
+      container.style.pointerEvents = "none";
     }
-    
-    function shuffleArray(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+
+    container.addEventListener("click", () => {
+      if (!canSelect) return;
+      cover.classList.remove("show");
+      // Nếu người dùng chọn đáp án đúng
+      if (imgSrc === q.correct) {
+        answerSelected = true;
+        checkmark.style.display = "block";
+        score++;
+        userAnswers[currentQuestionIndex] = imgSrc; // Lưu đáp án
+        disableAllClicks();
+        nextBtn.disabled = false;
+      } else {
+        wrongmark.style.display = "block";
+        userAnswers[currentQuestionIndex] = imgSrc; // Lưu đáp án
+        audioWrong.play();
+        setTimeout(() => {
+          wrongmark.style.display = "none";
+          cover.classList.add("show");
+        }, 1000);
       }
-    }
-    
-    startBtn.addEventListener("click", startGame);
-    replayBtn.addEventListener("click", () => {
-      showScreen("start");
     });
-    
-    // Xử lý modal TUTORIAL: bảng Tutorial sẽ xuất hiện ở giữa màn hình Game khi nhấn nút,
-    // và khi ẩn đi sẽ hoàn toàn ra khỏi giao diện.
-    tutorialBtn.addEventListener("click", () => {
-      tutorialModal.classList.add("show");
-    });
-    closeTutorial.addEventListener("click", () => {
-      tutorialModal.classList.remove("show");
-    });
-    
-    window.addEventListener('load', () => {
-      const bgMusic = document.getElementById('bgMusic');
-      bgMusic.play().catch(err => {
-        console.log("Autoplay bị chặn:", err);
-      });
-    });
-  </script>
-</body>
-</html>
+
+    container.appendChild(img);
+    container.appendChild(cover);
+    container.appendChild(checkmark);
+    container.appendChild(wrongmark);
+    item.appendChild(label);
+    item.appendChild(container);
+    imageWrapper.appendChild(item);
+  });
+  
+  // Đợi 1 giây trước khi bắt đầu đếm ngược và phát nhạc "tiktak.mp3"
+  setTimeout(() => {
+    tiktakAudio.play().catch(err => console.log("Tiktak autoplay bị chặn:", err));
+    timerInterval = setInterval(() => {
+      remainingTime--;
+      updateTimerDisplay();
+      if (remainingTime <= 0) {
+        clearInterval(timerInterval);
+        tiktakAudio.pause();
+        tiktakAudio.currentTime = 0;
+        showAllCovers();
+        canSelect = true;
+        // Cập nhật tiêu đề với từ vựng của câu hỏi
+        questionTitle.textContent = `Question ${currentQuestionIndex + 1}: ${q.word}`;
+      }
+    }, 1000);
+  }, 1000);
+}
