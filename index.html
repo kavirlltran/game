@@ -10,8 +10,12 @@
       font-family: 'FS PFBeauSansPro';
       src: url('FS PFBeauSansPro-BlackItalic.ttf') format('truetype');
     }
+
+    /* Cài đặt cơ bản */
+    :root {
+      font-size: 16px;
+    }
     
-    /* Áp dụng font và in đậm cho toàn bộ nội dung */
     body {
       font-family: 'FS PFBeauSansPro', sans-serif;
       font-weight: bold;
@@ -19,9 +23,10 @@
       background-size: cover;
       color: #333;
       text-align: center;
-      padding: 20px;
+      padding: 1.25rem;
       font-size: 1.3rem;
       position: relative;
+      margin: 0;
     }
     body::after {
       content: "";
@@ -50,41 +55,41 @@
       display: none;
     }
     
-    /* NHẠC NỀN */
+    /* Ẩn nhạc nền */
     audio#bgMusic {
       display: none;
     }
     
-    /* KHUNG CHỮ – sử dụng ảnh "text.png" làm viền */
+    /* Khung chữ */
     .text-container {
-      border: 10px solid transparent;
-      border-image: url('text.png') 30 stretch;
-      padding: 15px;
-      border-radius: 8px;
-      max-width: 800px;
-      margin: 0 auto 20px;
+      border: 0.625rem solid transparent;
+      border-image: url('text.png') 1.875rem stretch;
+      padding: 0.9375rem;
+      border-radius: 0.5rem;
+      max-width: 50rem;
+      margin: 0 auto 1.25rem;
       background: rgba(255,255,255,0.6);
       color: #00008B;
     }
     
-    /* TIMER */
+    /* Timer */
     #timerDisplay {
       font-size: 2rem;
       font-weight: bold;
       color: red;
-      margin: 15px auto;
-      padding: 8px 12px;
-      border: 2px solid red;
-      border-radius: 4px;
+      margin: 0.9375rem auto;
+      padding: 0.5rem 0.75rem;
+      border: 0.125rem solid red;
+      border-radius: 0.25rem;
       width: fit-content;
       animation: fadeIn 1s ease-out;
     }
     
-    /* MÀN HÌNH */
+    /* Màn hình */
     .screen {
       display: none;
       min-height: 100vh;
-      padding: 20px;
+      padding: 1.25rem;
       animation: fadeIn 1s ease-out;
     }
     .active {
@@ -92,8 +97,8 @@
     }
     
     h1, h2, p {
-      max-width: 800px;
-      margin: 10px auto;
+      max-width: 50rem;
+      margin: 0.625rem auto;
     }
     h1 {
       font-size: 2rem;
@@ -105,36 +110,36 @@
       color: #ff4500;
     }
     
-    /* NÚT chung */
+    /* Nút chung */
     .btn {
-      padding: 12px 24px;
-      margin: 10px;
+      padding: 0.75rem 1.5rem;
+      margin: 0.625rem;
       cursor: pointer;
       background: #0077cc;
       color: #fff;
       border: none;
-      border-radius: 4px;
+      border-radius: 0.25rem;
       font-size: 1.2rem;
       transition: transform 0.2s, box-shadow 0.2s;
     }
     .btn:hover {
       transform: scale(1.05);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      box-shadow: 0 0.25rem 0.625rem rgba(0,0,0,0.3);
     }
     .btn:disabled {
       background: #aaa;
       cursor: not-allowed;
     }
     
-    /* VÙNG CHỨA ẢNH */
+    /* Vùng chứa ảnh */
     #imageWrapper {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      padding: 10px;
+      gap: 1.25rem;
+      padding: 0.625rem;
       animation: fadeIn 1s ease-out;
-      max-width: 1200px;
-      margin: 20px auto;
+      max-width: 75rem;
+      margin: 1.25rem auto;
     }
     
     .image-item {
@@ -142,31 +147,31 @@
       flex-direction: column;
       align-items: center;
       background: rgba(255,255,255,0.6);
-      border: 2px solid rgba(204,204,204,0.6);
-      padding: 0 30px;
-      border-radius: 10px;
+      border: 0.125rem solid rgba(204,204,204,0.6);
+      padding: 0 1.875rem;
+      border-radius: 0.625rem;
     }
     
     .number-label {
       background: #ff9800;
       color: #fff;
-      padding: 6px 14px;
-      border-radius: 8px;
+      padding: 0.375rem 0.875rem;
+      border-radius: 0.5rem;
       font-weight: bold;
       font-size: 1.5rem;
-      margin-bottom: 10px;
+      margin-bottom: 0.625rem;
       animation: bounce 1s;
     }
     
-    /* Container ảnh sử dụng ảnh "pic.png" làm viền */
+    /* Container ảnh */
     .image-container {
       position: relative;
       width: 100%;
-      max-width: 1365px;
+      max-width: 85.3125rem;
       aspect-ratio: 1365 / 858;
-      border: 10px solid transparent;
-      border-image: url('pic.png') 30 stretch;
-      border-radius: 10px;
+      border: 0.625rem solid transparent;
+      border-image: url('pic.png') 1.875rem stretch;
+      border-radius: 0.625rem;
       overflow: hidden;
       background: rgba(238,238,238,0.6);
       cursor: pointer;
@@ -174,7 +179,7 @@
     }
     .image-container:hover {
       transform: scale(1.02);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+      box-shadow: 0 0.375rem 0.75rem rgba(0,0,0,0.3);
     }
     .image-container img {
       width: 100%;
@@ -185,7 +190,7 @@
       transform-origin: center center;
     }
     
-    /* Lớp che sử dụng ảnh "che.png" */
+    /* Lớp che ảnh */
     .cover {
       position: absolute;
       top: 0;
@@ -219,20 +224,20 @@
     
     /* Nút Next và Back */
     #backBtn, #nextBtn {
-      margin-top: 20px;
+      margin-top: 1.25rem;
       animation: fadeIn 1s ease-out;
     }
     
-    /* Nút TUTORIAL */
+    /* Nút Tutorial */
     #tutorialBtn {
       position: fixed;
-      bottom: 20px;
-      left: 20px;
-      padding: 16px 28px;
+      bottom: 1.25rem;
+      left: 1.25rem;
+      padding: 1rem 1.75rem;
       background: #ff0;
       color: #000;
       border: none;
-      border-radius: 4px;
+      border-radius: 0.25rem;
       font-size: 1.5rem;
       cursor: pointer;
       z-index: 100;
@@ -240,26 +245,26 @@
     }
     #tutorialBtn:hover {
       transform: scale(1.1);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      box-shadow: 0 0.125rem 0.5rem rgba(0,0,0,0.3);
     }
     
-    /* Modal TUTORIAL */
+    /* Modal Tutorial */
     #tutorialModal {
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%) scale(0.8);
       background: rgba(255, 255, 255, 0.95);
-      border: 3px solid rgba(179,212,252,0.8);
-      border-radius: 8px;
-      max-width: 500px;
+      border: 0.1875rem solid rgba(179,212,252,0.8);
+      border-radius: 0.5rem;
+      max-width: 31.25rem;
       width: 90%;
-      padding: 20px;
+      padding: 1.25rem;
       z-index: 1000;
       opacity: 0;
       pointer-events: none;
       transition: all 0.5s ease;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      box-shadow: 0 0.5rem 1.25rem rgba(0,0,0,0.3);
       display: none;
     }
     #tutorialModal.show {
@@ -269,19 +274,19 @@
       pointer-events: auto;
     }
     #tutorialModal h3 {
-      margin-bottom: 10px;
+      margin-bottom: 0.625rem;
       color: #0077cc;
     }
     #tutorialModal p {
       text-align: left;
       line-height: 1.5;
-      margin-bottom: 20px;
+      margin-bottom: 1.25rem;
       color: #000;
     }
     #closeTutorial {
       position: absolute;
-      top: 10px;
-      right: 15px;
+      top: 0.625rem;
+      right: 0.9375rem;
       font-size: 1.5rem;
       font-weight: bold;
       color: #0077cc;
@@ -295,8 +300,8 @@
     }
     @keyframes bounce {
       0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-      40% { transform: translateY(-10px); }
-      60% { transform: translateY(-5px); }
+      40% { transform: translateY(-0.625rem); }
+      60% { transform: translateY(-0.3125rem); }
     }
     @keyframes pulse {
       0% { transform: scale(1); }
@@ -304,26 +309,36 @@
       100% { transform: scale(1); }
     }
     
-    /* Responsive */
+    /* Responsive styles */
     @media (max-width: 768px) {
       #imageWrapper {
         grid-template-columns: 1fr;
-        gap: 20px;
+        gap: 1.25rem;
       }
       .image-container {
         width: 90vw;
         aspect-ratio: auto;
       }
     }
+    @media (max-width: 480px) {
+      :root { font-size: 14px; }
+      body { padding: 0.75rem; }
+      .text-container { padding: 0.75rem; margin-bottom: 1rem; }
+      h1 { font-size: 1.8rem; }
+      h2 { font-size: 1.5rem; }
+      .btn { font-size: 1rem; padding: 0.5rem 1rem; }
+      #timerDisplay { font-size: 1.5rem; }
+      #tutorialBtn { font-size: 1.25rem; padding: 0.75rem 1.25rem; }
+    }
   </style>
 </head>
 <body>
-  <!-- Nhạc nền tự động chạy (không phát nhạc khi nhấn Start) -->
+  <!-- Nhạc nền (không phát khi nhấn Start) -->
   <audio id="bgMusic" src="music.mp3" loop></audio>
   <!-- Audio tiktak -->
   <audio id="tiktakAudio" src="tiktak.mp3"></audio>
   
-  <!-- Nút TUTORIAL -->
+  <!-- Nút Tutorial -->
   <button id="tutorialBtn">TUTORIAL</button>
   
   <!-- Màn hình Start -->
@@ -331,7 +346,7 @@
     <div class="text-container">
       <h1>SECRET WINDOW</h1>
       <p>
-        B1: Nhấn <span style="font-weight: bold; border: 2px solid #0077cc; padding: 5px 10px; border-radius: 4px;">Start</span> để vào game;<br>
+        B1: Nhấn <span style="font-weight: bold; border: 0.125rem solid #0077cc; padding: 0.3125rem 0.625rem; border-radius: 0.25rem;">Start</span> để vào game;<br>
         B2: Học sinh sẽ quan sát hình ảnh được mở ra từ ô cửa trong khoảng thời gian đã chọn, 
         sau đó ô cửa đóng lại và hiển thị flashcard từ vựng/âm thanh. Nhiệm vụ của học sinh là ghi nhớ đúng từ đó nằm trong ô cửa nào và đập tay vào đúng ô cửa đó.
       </p>
@@ -349,12 +364,12 @@
     <!-- Nút Back và Next -->
     <button class="btn" id="backBtn" disabled>Back</button>
     <button class="btn" id="nextBtn" disabled>Next</button>
-    <!-- Modal TUTORIAL -->
+    <!-- Modal Tutorial -->
     <div id="tutorialModal">
       <span id="closeTutorial">×</span>
       <h3>TUTORIAL</h3>
       <p>
-        B1: Nhấn <strong style="border: 2px solid #0077cc; padding: 5px 10px; border-radius: 4px;">Start</strong> để vào game.<br>
+        B1: Nhấn <strong style="border: 0.125rem solid #0077cc; padding: 0.3125rem 0.625rem; border-radius: 0.25rem;">Start</strong> để vào game.<br>
         B2: Học sinh sẽ quan sát hình ảnh được mở ra từ ô cửa trong khoảng thời gian đã chọn. Sau khi thời gian kết thúc, ô cửa đóng lại và hiển thị flashcard từ vựng/âm thanh. Nhiệm vụ của học sinh là ghi nhớ đúng từ đó nằm trong ô cửa nào và đập tay vào đúng ô cửa đó.
       </p>
     </div>
@@ -541,7 +556,7 @@
           // Khi click vào ảnh, ẩn lớp che của container đó để hiện đáp án
           cover.classList.remove("show");
     
-          // Nếu đã có đáp án được lưu (đã trả lời đúng) thì không cho thay đổi
+          // Nếu đáp án đã được lưu (đã trả lời đúng) thì không cho thay đổi
           if (userAnswers[currentQuestionIndex]) return;
     
           if (imgSrc === q.correct) {
@@ -551,7 +566,7 @@
             score++;
             answerSelected = true;
             userAnswers[currentQuestionIndex] = imgSrc;
-            // Chỉ mở container được chọn, không lật hết các ảnh khác
+            // Chỉ mở container được chọn
             container.style.pointerEvents = "none";
             nextBtn.disabled = false;
           } else {
@@ -596,7 +611,7 @@
               clearInterval(timerInterval);
               tiktakAudio.pause();
               tiktakAudio.currentTime = 0;
-              // Khi hết thời gian, hiển thị lớp che lên các ảnh (chỉ nếu chưa chọn đáp án đúng)
+              // Khi hết thời gian, hiển thị lớp che lên các ảnh (nếu chưa chọn đáp án đúng)
               showAllCovers();
               canSelect = true;
               questionTitle.textContent = `Question ${currentQuestionIndex + 1}: ${q.word}`;
